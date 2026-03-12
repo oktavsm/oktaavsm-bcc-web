@@ -321,9 +321,9 @@ http.createServer(async (req, res) => {
       return proxyMedia(mu, res);
     }
 
-    if (pathname === '/favicon.ico') {
+    if (pathname === '/favicon.ico' || pathname === '/favicon.svg') {
       res.writeHead(200, { 'Content-Type': 'image/svg+xml' });
-      return res.end('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#ff3356"/><text x="16" y="22" text-anchor="middle" font-size="18">🎵</text></svg>');
+      return res.end('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#56cfaa"/><stop offset="100%" stop-color="#2d9e6e"/></linearGradient></defs><rect width="32" height="32" rx="7" fill="#091e13"/><circle cx="16" cy="16" r="10" fill="url(#g)"/><circle cx="16" cy="16" r="5.5" fill="#091e13"/></svg>');
     }
 
     let fp = path.join(__dirname, pathname === '/' ? 'index.html' : pathname);

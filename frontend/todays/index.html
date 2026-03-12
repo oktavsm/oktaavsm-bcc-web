@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Today's Digest · 2026-03-12</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@700;800&display=swap"/>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface2: #1c2128;
+      --border: #30363d;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --text-dim: #484f58;
+      --green: #39d353;
+      --green-dim: #2ea043;
+      --orange: #d29922;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      min-height: 100vh;
+      padding: 0 16px 80px;
+    }
+
+    /* Top bar */
+    .topbar {
+      position: sticky; top: 0; z-index: 10;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .topbar-dots { display: flex; gap: 8px; }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot.red { background: #ff5f56; }
+    .dot.yellow { background: #ffbd2e; }
+    .dot.green { background: #27c93f; }
+    .topbar-title { font: 700 13px 'JetBrains Mono', monospace; color: var(--text-dim); }
+    .topbar-date { font: 500 12px 'JetBrains Mono', monospace; color: var(--green); }
+
+    /* Layout */
+    .container { max-width: 860px; margin: 0 auto; padding-top: 48px; }
+
+    /* Hero */
+    .hero { margin-bottom: 56px; }
+    .hero-label {
+      font: 700 11px 'JetBrains Mono', monospace;
+      color: var(--green);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .hero-title {
+      font: 800 48px 'Syne', sans-serif;
+      line-height: 1.05;
+      color: var(--text);
+    }
+    .hero-title span { color: var(--green); }
+    .hero-sub {
+      margin-top: 16px;
+      font: 400 13px 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    /* Section header */
+    .section-header {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 24px;
+    }
+    .section-label {
+      font: 700 10px 'JetBrains Mono', monospace;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .section-line { flex: 1; height: 1px; background: var(--border); }
+
+    /* Story cards */
+    .stories { display: flex; flex-direction: column; gap: 2px; margin-bottom: 64px; }
+    .story-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 24px;
+      transition: border-color .2s, background .2s;
+      position: relative;
+    }
+    .story-card:hover { border-color: var(--green-dim); background: var(--surface2); }
+    .story-card::before {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--green);
+      border-radius: 8px 0 0 8px;
+      opacity: 0;
+      transition: opacity .2s;
+    }
+    .story-card:hover::before { opacity: 1; }
+    .story-link { text-decoration: none; }
+    .story-link h3 {
+      font: 700 14px 'Syne', sans-serif;
+      color: var(--text);
+      line-height: 1.5;
+      transition: color .2s;
+    }
+    .story-link:hover h3 { color: var(--green); }
+    .story-meta {
+      margin-top: 8px;
+      font: 400 11px 'JetBrains Mono', monospace;
+      color: var(--text-dim);
+      display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+    }
+    .score { color: var(--orange); }
+    .sep { color: var(--border); }
+    .summary {
+      margin-top: 12px;
+      font: 400 12px 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+      line-height: 1.8;
+      border-left: 2px solid var(--border);
+      padding-left: 12px;
+    }
+
+    /* Concept section */
+    .concept-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 64px;
+    }
+    .concept-header {
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 24px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    }
+    .concept-title-wrap { display: flex; flex-direction: column; gap: 4px; }
+    .badge {
+      display: inline-block;
+      background: var(--green-dim);
+      color: #0d1117;
+      font: 700 9px 'JetBrains Mono', monospace;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 99px;
+      margin-bottom: 6px;
+    }
+    .concept-title-text {
+      font: 800 22px 'Syne', sans-serif;
+      color: var(--green);
+      line-height: 1.2;
+    }
+    .concept-tldr-text {
+      font: 400 12px 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+      max-width: 500px;
+    }
+    .concept-body { padding: 28px 24px; display: flex; flex-direction: column; gap: 20px; }
+    .concept-body p {
+      font: 400 13px 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+      line-height: 2;
+    }
+    .ascii {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      font: 400 12px 'JetBrains Mono', monospace;
+      color: var(--green);
+      overflow-x: auto;
+      line-height: 1.6;
+    }
+    .cmd-block {
+      background: var(--bg);
+      border: 1px solid var(--green-dim);
+      border-radius: 8px;
+      padding: 14px 20px;
+      font: 700 13px 'JetBrains Mono', monospace;
+      color: var(--green);
+    }
+    .prompt { color: var(--text-dim); margin-right: 10px; }
+    .fun-fact-block {
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+      font: 400 12px 'JetBrains Mono', monospace;
+      color: var(--text-dim);
+      font-style: italic;
+      line-height: 1.8;
+    }
+    .fun-fact-block::before { content: '💡 '; font-style: normal; }
+
+    /* SVG embed section */
+    .svg-section { margin-bottom: 64px; }
+    .svg-preview {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+    }
+    .svg-preview img { max-width: 100%; border-radius: 8px; }
+    .svg-copy {
+      margin-top: 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font: 400 12px 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+      text-align: left;
+      cursor: pointer;
+      transition: border-color .2s;
+    }
+    .svg-copy:hover { border-color: var(--green); color: var(--text); }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      font: 400 11px 'JetBrains Mono', monospace;
+      color: var(--text-dim);
+      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+    }
+
+    @media (max-width: 600px) {
+      .hero-title { font-size: 32px; }
+      .topbar-date { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="topbar-dots">
+    <div class="dot red"></div>
+    <div class="dot yellow"></div>
+    <div class="dot green"></div>
+  </div>
+  <div class="topbar-title">daily-digest // 2026-03-12</div>
+  <div class="topbar-date">@oktavsm</div>
+</nav>
+
+<div class="container">
+
+  <header class="hero">
+    <div class="hero-label">// daily digest</div>
+    <h1 class="hero-title">Today's<br/><span>Tech Brief.</span></h1>
+    <p class="hero-sub">
+      Thursday, 12 March 2026<br/>
+      Auto-generated · Hacker News + Networking Concept · Powered by Gemini
+    </p>
+  </header>
+
+  <!-- HN Stories -->
+  <section>
+    <div class="section-header">
+      <span class="section-label">// hacker news</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="stories">
+      
+        <article class="story-card">
+          <a href="https://www.lloydslist.com/LL1156592/US--and-Greek-owned-tankers-ablaze-after-Iran-claims-underwater-drone-strike-in-Iraqi-waters" target="_blank" rel="noopener" class="story-link">
+            <h3>US- and Greek-owned tankers ablaze after Iran claims 'underwater drone' strike</h3>
+          </a>
+          <div class="story-meta">
+            <span class="score">▲ 84</span>
+            <span class="sep">·</span>
+            <span>💬 44 comments</span>
+            <span class="sep">·</span>
+            <span>by everybodyknows</span>
+          </div>
+          <p class="summary">Dua kapal tanker milik AS dan Yunani dilaporkan terbakar di perairan Irak setelah Iran mengklaim bertanggung jawab atas insiden tersebut. Iran menyatakan serangan itu dilakukan oleh drone bawah air, memicu ketegangan di kawasan maritim.</p>
+        </article>
+        <article class="story-card">
+          <a href="https://malus.sh" target="_blank" rel="noopener" class="story-link">
+            <h3>Malus – Clean Room as a Service</h3>
+          </a>
+          <div class="story-meta">
+            <span class="score">▲ 205</span>
+            <span class="sep">·</span>
+            <span>💬 67 comments</span>
+            <span class="sep">·</span>
+            <span>by microflash</span>
+          </div>
+          <p class="summary">Malus menawarkan solusi 'Clean Room as a Service' untuk developer yang membutuhkan lingkungan komputasi yang sangat terisolasi dan aman. Layanan ini dirancang untuk menjalankan tugas sensitif atau menguji kode tanpa risiko kebocoran data atau infeksi sistem.</p>
+        </article>
+        <article class="story-card">
+          <a href="https://alternativecreditinvestor.com/2025/10/22/us-banks-exposure-to-private-credit-hits-300bn/" target="_blank" rel="noopener" class="story-link">
+            <h3>US banks' exposure to private credit hits $300B (2025)</h3>
+          </a>
+          <div class="story-meta">
+            <span class="score">▲ 121</span>
+            <span class="sep">·</span>
+            <span>💬 70 comments</span>
+            <span class="sep">·</span>
+            <span>by JumpCrisscross</span>
+          </div>
+          <p class="summary">Eksposur bank-bank Amerika Serikat terhadap kredit swasta diproyeksikan mencapai $300 miliar pada tahun 2025. Tren ini menunjukkan pertumbuhan signifikan di pasar kredit swasta dan potensi implikasi baru bagi sektor perbankan.</p>
+        </article>
+        <article class="story-card">
+          <a href="https://codespeak.dev/" target="_blank" rel="noopener" class="story-link">
+            <h3>Kotlin creator's new language: a formal way to talk to LLMs instead of English</h3>
+          </a>
+          <div class="story-meta">
+            <span class="score">▲ 72</span>
+            <span class="sep">·</span>
+            <span>💬 50 comments</span>
+            <span class="sep">·</span>
+            <span>by souvlakee</span>
+          </div>
+          <p class="summary">Pencipta Kotlin memperkenalkan bahasa baru, Codespeak, sebagai cara formal untuk berkomunikasi dengan Large Language Models (LLM). Tujuannya adalah menggantikan prompt bahasa Inggris alami yang ambigu dengan sintaks yang lebih terstruktur dan presisi.</p>
+        </article>
+        <article class="story-card">
+          <a href="https://dolphin-emu.org/blog/2026/03/12/dolphin-progress-report-release-2603/" target="_blank" rel="noopener" class="story-link">
+            <h3>Dolphin Progress Release 2603</h3>
+          </a>
+          <div class="story-meta">
+            <span class="score">▲ 195</span>
+            <span class="sep">·</span>
+            <span>💬 24 comments</span>
+            <span class="sep">·</span>
+            <span>by BitPirate</span>
+          </div>
+          <p class="summary">Dolphin Emulator merilis laporan kemajuan terbaru (Release 2603) yang menyoroti berbagai peningkatan dan fitur baru. Pembaruan ini bertujuan untuk meningkatkan performa, stabilitas, dan kompatibilitas emulasi game.</p>
+        </article>
+    </div>
+  </section>
+
+  <!-- Networking Concept -->
+  <section>
+    <div class="section-header">
+      <span class="section-label">// android concept of the day</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-header">
+        <div class="concept-title-wrap">
+          <span class="badge">Architecture</span>
+          <div class="concept-title-text">Memahami Activity pada Android</div>
+        </div>
+        <div class="concept-tldr-text">Activity adalah komponen inti aplikasi Android yang menyediakan satu layar interaktif untuk pengguna berinteraksi.</div>
+      </div>
+      <div class="concept-body">
+        <p>Activity adalah fondasi aplikasi Android Anda. Bayangkan setiap layar dalam aplikasi Anda — layar login, layar daftar produk, layar detail — semuanya diwakili oleh sebuah Activity. Ini adalah tempat Anda meletakkan elemen UI seperti tombol dan teks, serta logika bisnis yang terkait dengan layar tersebut, memungkinkan pengguna berinteraksi langsung dengan aplikasi.</p><p>Setiap Activity memiliki siklus hidup (lifecycle) yang terdefinisi dengan baik, mulai dari dibuat (`onCreate()`), terlihat oleh pengguna (`onStart()`, `onResume()`), hingga tidak terlihat (`onPause()`, `onStop()`) dan akhirnya dihancurkan (`onDestroy()`). Memahami lifecycle ini sangat krusial untuk mengelola resource dengan benar, menyimpan data, dan memastikan aplikasi berjalan efisien serta bebas error, terutama saat pengguna berpindah antar layar atau menerima panggilan telepon.</p><p>Untuk membuat sebuah Activity, Anda perlu membuat class Kotlin yang mewarisi dari `AppCompatActivity` (atau `ComponentActivity` secara modern). Di dalam metode `onCreate()`, Anda biasanya memanggil `setContentView()` untuk mengaitkan layout XML dengan Activity tersebut. Setiap Activity juga harus didaftarkan dalam file `AndroidManifest.xml` agar sistem Android dapat mengenalinya dan meluncurkannya. Aplikasi Android seringkali memiliki lebih dari satu Activity, dan untuk berpindah antar Activity, kita menggunakan objek `Intent`.</p>
+        
+        <div class="cmd-block"><span class="prompt">$</span> package com.example.myfirstapp
+
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+
+class MainActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main) // Mengaitkan layout XML
+    }
+}</div>
+        <div class="fun-fact-block">Meskipun Activity adalah fondasi, tren modern dalam pengembangan Android bergerak menuju arsitektur 'Single-Activity', di mana satu Activity utama berfungsi sebagai host untuk banyak Fragment, menyederhanakan manajemen lifecycle dan navigasi.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SVG Card -->
+  <section class="svg-section">
+    <div class="section-header">
+      <span class="section-label">// github profile card</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="svg-preview">
+      <img src="https://oktaavsm.bccdev.id/todays/digest.svg" alt="Daily Digest Card"/>
+      <div class="svg-copy" onclick="navigator.clipboard.writeText(this.dataset.md).then(()=>this.textContent='✓ Copied!');" 
+           data-md="![Daily Digest](https://oktaavsm.bccdev.id/todays/digest.svg)">
+        ![Daily Digest](https://oktaavsm.bccdev.id/todays/digest.svg) &nbsp;← click to copy markdown
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <span>auto-generated by daily-digest · <a href="https://github.com/oktavsm/daily-digest" style="color:var(--green);text-decoration:none">github.com/oktavsm/daily-digest</a></span>
+  <span>data: hacker-news api + gemini</span>
+</footer>
+
+</body>
+</html>

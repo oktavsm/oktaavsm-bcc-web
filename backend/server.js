@@ -9,10 +9,20 @@ app.use(express.json());
 const OWM_KEY         = process.env.OWM_KEY || "";
 const LASTFM_KEY      = process.env.LASTFM_KEY || "";
 const LASTFM_USER     = process.env.LASTFM_USER || "";
-const GEMINI_KEY      = process.env.GEMINI_KEY || "";
+const GEMINI_KEYS     = [
+  { name: "GEMINI_KEY_1", value: process.env.GEMINI_KEY_1 || "" },
+  { name: "GEMINI_KEY_2", value: process.env.GEMINI_KEY_2 || "" },
+  { name: "GEMINI_KEY_3", value: process.env.GEMINI_KEY_3 || "" },
+  { name: "GEMINI_KEY_4", value: process.env.GEMINI_KEY_4 || "" },
+  { name: "GEMINI_KEY_5", value: process.env.GEMINI_KEY_5 || "" },
+  { name: "GEMINI_KEY_6", value: process.env.GEMINI_KEY_6 || "" },
+  { name: "GEMINI_KEY_7", value: process.env.GEMINI_KEY_7 || "" },
+  { name: "GEMINI_KEY", value: process.env.GEMINI_KEY || "" }, // backward compatibility
+].filter((entry, index, arr) => entry.value && arr.findIndex(item => item.value === entry.value) === index);
 const GITHUB_TOKEN    = process.env.GITHUB_TOKEN || "";
 const GITHUB_USERNAME = process.env.GITHUB_USERNAME || "oktavsm";
 const REFRESH_SECRET  = process.env.REFRESH_SECRET || "";
+let geminiKeyCursor = 0;
 
 // ─── IN-MEMORY CACHE ───────────────────────────────────────────────────────
 let cache = {
@@ -54,14 +64,29 @@ async function fetchWeather() {
 }
 
 // ─── LAST.FM ──────────────────────────────────────────────────────────────
-async function fetchSpotify() {
+const LASTFM_TRANSIENT_ERRORS = new Set([8, 11, 16]); // temporary server-side failures
+
+async function fetchSpotify({ attempt = 1, maxAttempts = 3 } = {}) {
   try {
     const res = await fetch(
       `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${LASTFM_USER}&api_key=${LASTFM_KEY}&format=json&limit=1`
     );
     const d = await res.json();
+    if (d.error) {
+      if (LASTFM_TRANSIENT_ERRORS.has(d.error) && attempt < maxAttempts) {
+        const delay = attempt * 5000;
+        console.warn(`LastFM API error ${d.error} (transient): ${d.message} — retry ${attempt}/${maxAttempts - 1} in ${delay / 1000}s`);
+        await new Promise(r => setTimeout(r, delay));
+        return fetchSpotify({ attempt: attempt + 1, maxAttempts });
+      }
+      console.error(`LastFM API error ${d.error}: ${d.message}`);
+      return;
+    }
     const tracks = d.recenttracks?.track;
-    if (!tracks || tracks.length === 0) return;
+    if (!tracks || (Array.isArray(tracks) && tracks.length === 0)) {
+      console.warn("LastFM: no tracks returned (empty scrobble history?)");
+      return;
+    }
 
     const t = Array.isArray(tracks) ? tracks[0] : tracks;
     const isPlaying = t["@attr"]?.nowplaying === "true";
@@ -163,6 +188,11 @@ async function fetchGithub() {
 // ─── GEMINI ───────────────────────────────────────────────────────────────
 async function fetchGemini() {
   try {
+    if (GEMINI_KEYS.length === 0) {
+      console.error("Gemini fetch error: no GEMINI_KEY configured");
+      return;
+    }
+
     const weather = cache.weather;
     const spotify = cache.spotify;
     const weatherCtx = weather
@@ -185,22 +215,59 @@ Output exactly two lines separated by |||:
 2. ROAST (max 25 words): A dry, witty dev humor quip. Universal, not personal. Could be about the irony of coding, tech debt, stack choices, or the dev lifestyle. No names. Examples of tone: "Wrote 200 lines to avoid writing 10." / "The app works. Nobody knows why. Including the developer."
 
 No labels, no quotes, no markdown, no names. Just the two lines separated by |||.`;
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
+    const total = GEMINI_KEYS.length;
+    let lastError = "Unknown Gemini error";
+
+    for (let offset = 0; offset < total; offset++) {
+      const keyIndex = (geminiKeyCursor + offset) % total;
+      const activeKey = GEMINI_KEYS[keyIndex];
+      const attempt = `[${offset + 1}/${total}]`;
+
+      console.log(`🔑 Gemini ${attempt} trying ${activeKey.name}...`);
+
+      try {
+        const res = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${activeKey.value}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
+          }
+        );
+
+        const d = await res.json();
+        if (!res.ok || d?.error) {
+          const reason = d?.error?.message || `HTTP ${res.status}`;
+          const isQuota = res.status === 429 || reason.toLowerCase().includes("quota");
+          throw new Error(isQuota ? `QUOTA_EXCEEDED (${reason})` : reason);
+        }
+
+        const text = d.candidates?.[0]?.content?.parts?.[0]?.text || "";
+        if (!text.trim()) {
+          throw new Error("Empty response body");
+        }
+
+        const parts = text.split("|||");
+        cache.gemini = {
+          bio: parts[0]?.trim() || "Building things in Malang ☕",
+          roast: parts[1]?.trim() || "Your code works, your README doesn't.",
+        };
+
+        geminiKeyCursor = (keyIndex + 1) % total;
+        console.log(`✅ Gemini ${attempt} success (${activeKey.name}) → bio: "${cache.gemini.bio.substring(0, 50)}..."`);
+        return;
+      } catch (error) {
+        lastError = error.message;
+        const hasNext = offset + 1 < total;
+        const nextKey = hasNext ? GEMINI_KEYS[(keyIndex + 1) % total].name : null;
+        console.warn(
+          `⚠️  Gemini ${attempt} FAILED (${activeKey.name}): ${error.message}` +
+          (hasNext ? ` → retrying with ${nextKey}` : " → no more keys to try")
+        );
       }
-    );
-    const d = await res.json();
-    const text = d.candidates?.[0]?.content?.parts?.[0]?.text || "";
-    const parts = text.split("|||");
-    cache.gemini = {
-      bio: parts[0]?.trim() || "Building things in Malang ☕",
-      roast: parts[1]?.trim() || "Your code works, your README doesn't.",
-    };
-    console.log("✅ Gemini bio:", cache.gemini.bio.substring(0, 50) + "...");
+    }
+
+    console.error(`❌ Gemini: all ${total} key(s) exhausted. Last error: ${lastError}`);
   } catch (e) {
     console.error("Gemini fetch error:", e.message);
   }
@@ -228,16 +295,35 @@ app.get("/api/preview", async (req, res) => {
 });
 
 // ─── REFRESH ALL DATA ─────────────────────────────────────────────────────
-async function refreshAll() {
-  console.log("🔄 Refreshing all data...");
-  await Promise.all([fetchWeather(), fetchGithub()]);
-  await Promise.all([fetchSpotify(), fetchGemini()]);
+const CORE_REFRESH_MS = 3 * 60 * 1000;
+const GEMINI_REFRESH_MS = 15 * 60 * 1000;
+
+async function refreshCoreData() {
+  console.log("🔄 Refreshing core data...");
+  await Promise.all([fetchWeather(), fetchGithub(), fetchSpotify()]);
   cache.svgGeneratedAt = 0;
+  console.log("✅ Core data refreshed");
+}
+
+async function refreshGeminiData() {
+  const nextKey = GEMINI_KEYS.length > 0 ? GEMINI_KEYS[geminiKeyCursor % GEMINI_KEYS.length].name : "none";
+  console.log(`🔄 Refreshing Gemini data... (trying ${nextKey})`);
+  await fetchGemini();
+  cache.svgGeneratedAt = 0;
+  console.log("✅ Gemini data refreshed");
+}
+
+async function refreshAll() {
+  console.log("🔄 Manual refresh all data...");
+  await refreshCoreData();
+  await refreshGeminiData();
   console.log("✅ Data refreshed");
 }
 
-refreshAll();
-setInterval(refreshAll, 3 * 60 * 1000); //refresh every 3 minutes
+refreshCoreData();
+refreshGeminiData();
+setInterval(refreshCoreData, CORE_REFRESH_MS);
+setInterval(refreshGeminiData, GEMINI_REFRESH_MS);
 
 // ─── THEME PALETTES ───────────────────────────────────────────────────────
 const palettes = {

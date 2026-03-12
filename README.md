@@ -79,3 +79,6 @@ The workflow `.github/workflows/update-readme.yml` runs every 6 hours:
 Add the following secrets to your GitHub profile repo (`oktavsm/oktavsm`):
 - `REFRESH_SECRET` — same value as in your `.env`
 - `SERVER_URL` — `https://oktaavsm.bccdev.id`
+
+
+[![GitHub Profile](https://oktaavsm.bccdev.id/github-svg/svg/oktavsm)](https://github.com/oktavsm)

@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <title>Oktavianus S. M. · Android Developer</title>
 <meta name="description" content="Android Developer · Kotlin & Jetpack Compose enthusiast. Welcome to my personal portfolio.">
 
@@ -1182,6 +1183,14 @@ body {
     <div class="card fade-up" data-delay="2">
       <div class="section-title">📱 Featured Projects</div>
       <div class="project-list">
+        <a class="project-item" href="https://github.com/oktavsm/daily-digest" target="_blank">
+          <div class="proj-icon">🤖</div>
+          <div class="proj-info">
+            <div class="proj-name">daily-digest</div>
+            <div class="proj-stack">Python · Gemini · Cron · Auto-commit</div>
+          </div>
+          <div class="proj-arrow">→</div>
+        </a>
         <a class="project-item" href="https://github.com/oktavsm/muel-app" target="_blank">
           <div class="proj-icon">💜</div>
           <div class="proj-info">
@@ -1247,6 +1256,10 @@ body {
         <div class="pulse-dot" style="width:5px;height:5px"></div>
         Auto-updates from this server · used in <a href="https://github.com/oktavsm" target="_blank" style="color:var(--accent)">github.com/oktavsm</a>
       </div>
+      <a href="/todays" style="display:inline-flex;align-items:center;gap:6px;margin-top:12px;padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:'DM Mono',monospace;font-size:11px;text-decoration:none;transition:border-color 0.2s,color 0.2s" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text)'">
+        <div class="pulse-dot" style="width:5px;height:5px"></div>
+        today's digest →
+      </a>
     </div>
 
   </div><!-- /right-panel -->
@@ -1555,8 +1568,11 @@ function typeText(el, text, speed) {
 }
 
 function relativeTime(iso) {
-  const h = Math.floor((Date.now() - new Date(iso).getTime()) / 3600000);
-  if (h < 1) return 'just now';
+  const diffMs = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(diffMs / 60000);
+  if (m < 1) return 'just now';
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
   if (h < 24) return `${h}h ago`;
   const d = Math.floor(h / 24);
   if (d === 1) return 'yesterday';
