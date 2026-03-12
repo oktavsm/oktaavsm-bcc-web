@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: okta-backend
+    restart: unless-stopped
+    network_mode: "host"
+    environment:
+      - PORT=3000
+      - OWM_KEY=${OWM_KEY}
+      - SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID}
+      - SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}
+      - SPOTIFY_REFRESH_TOKEN=${SPOTIFY_REFRESH_TOKEN}
+      - GEMINI_KEY=${GEMINI_KEY}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - GITHUB_USERNAME=${GITHUB_USERNAME:-oktavsm}
+      - REFRESH_SECRET=${REFRESH_SECRET}
+      - LASTFM_KEY=${LASTFM_KEY}
+      - LASTFM_USER=${LASTFM_USER}
+
+  tiksave:
+    build: ./tiksave
+    container_name: okta-tiksave
+    restart: unless-stopped
+    network_mode: "host"
+    environment:
+      - PORT=3001
+      - RAPIDAPI_KEY=${RAPIDAPI_KEY}
+
+  nginx:
+    image: nginx:alpine
+    container_name: okta-nginx
+    restart: unless-stopped
+    network_mode: "host"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+      - tiksave

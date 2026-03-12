@@ -1,0 +1,1916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oktavianus S. M. · Android Developer</title>
+<meta name="description" content="Android Developer · Kotlin & Jetpack Compose enthusiast. Welcome to my personal portfolio.">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://oktaavsm.bccdev.id/">
+<meta property="og:title" content="Oktavianus S. M. · Android Developer">
+<meta property="og:description" content="Android Developer · Kotlin & Jetpack Compose enthusiast. Welcome to my personal portfolio.">
+<meta property="og:image" content="https://oktaavsm.bccdev.id/profile.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Oktavianus S. M.">
+<meta property="og:site_name" content="Oktavianus S. M.">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://oktaavsm.bccdev.id/">
+<meta name="twitter:title" content="Oktavianus S. M. · Android Developer">
+<meta name="twitter:description" content="Android Developer · Kotlin & Jetpack Compose enthusiast. Welcome to my personal portfolio.">
+<meta name="twitter:image" content="https://oktaavsm.bccdev.id/profile.jpg">
+<meta name="twitter:image:alt" content="Oktavianus S. M.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* ─── RESET & BASE ────────────────────────────────────────────────── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --accent: #56cfaa;
+  --primary: #2d9e6e;
+  --bg: #0a2418;
+  --surface: #112e1f;
+  --surface2: #1c4232;
+  --text: #e8f5f0;
+  --subtext: #8ecfb4;
+  --card: rgba(255,255,255,0.05);
+  --border: rgba(86,207,170,0.18);
+  --roast: rgba(255,107,107,0.85);
+  --phone-bg: #050e0a;
+  --glow: rgba(86,207,170,0.15);
+  --transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.sunny {
+  --accent: #ffb347; --primary: #c46d00;
+  --bg: #1a0e00; --surface: #2a1800; --surface2: #3d2400;
+  --text: #fff5e6; --subtext: #d4956a;
+  --border: rgba(255,179,71,0.2); --glow: rgba(255,179,71,0.12);
+  --phone-bg: #120900;
+}
+body.rainy {
+  --accent: #5bc8f5; --primary: #1a6494;
+  --bg: #040e18; --surface: #0a1f30; --surface2: #122d44;
+  --text: #e0f4ff; --subtext: #7ab8d4;
+  --border: rgba(91,200,245,0.2); --glow: rgba(91,200,245,0.1);
+  --phone-bg: #020a10;
+}
+body.storm {
+  --accent: #a78bfa; --primary: #4a22a0;
+  --bg: #07030f; --surface: #130828; --surface2: #1e0f3a;
+  --text: #ede9fe; --subtext: #9d8ec4;
+  --border: rgba(167,139,250,0.2); --glow: rgba(167,139,250,0.1);
+  --phone-bg: #040108;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Instrument Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  transition: background var(--transition), color var(--transition);
+  overflow-x: hidden;
+}
+
+/* ─── AMBIENT BACKGROUND ─────────────────────────────────────────── */
+.ambient {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  transition: all var(--transition);
+}
+.ambient::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 55% at 15% 45%, var(--glow) 0%, transparent 65%),
+              radial-gradient(ellipse 45% 65% at 85% 25%, color-mix(in srgb, var(--primary) 8%, transparent) 0%, transparent 65%),
+              radial-gradient(ellipse 30% 40% at 60% 80%, color-mix(in srgb, var(--accent) 4%, transparent) 0%, transparent 60%);
+}
+.ambient::after {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.4;
+}
+
+/* ─── LOADING STATE ───────────────────────────────────────────────── */
+#loading {
+  position: fixed; inset: 0; z-index: 999;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 16px;
+  transition: opacity 0.5s ease;
+}
+#loading.hidden { opacity: 0; pointer-events: none; }
+.loader-text {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px; color: var(--subtext); letter-spacing: 2px;
+}
+.loader-bar {
+  width: 200px; height: 2px;
+  background: var(--surface2); border-radius: 2px; overflow: hidden;
+}
+.loader-fill {
+  height: 100%; width: 0; background: var(--accent);
+  border-radius: 2px;
+  animation: loadFill 1.8s ease forwards;
+}
+@keyframes loadFill { to { width: 100%; } }
+
+/* ─── MUSIC PLAYER ────────────────────────────────────────────────── */
+#musicPlayer {
+  position: fixed;
+  bottom: 56px;
+  right: 24px;
+  z-index: 200;
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 14px 16px;
+  display: none;
+  align-items: center;
+  gap: 12px;
+  backdrop-filter: blur(24px);
+  opacity: 0;
+  transition: opacity 0.8s ease, transform 0.5s cubic-bezier(0.34,1.56,0.64,1), border-color var(--transition);
+  min-width: 240px;
+  max-width: 300px;
+  transform: translateY(12px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
+}
+#musicPlayer.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+#musicPlayer:hover {
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+#playerArt {
+  width: 44px; height: 44px; border-radius: 10px;
+  object-fit: cover; flex-shrink: 0;
+  background: var(--surface2);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+#playerArt.spinning {
+  animation: spinArt 8s linear infinite;
+}
+@keyframes spinArt {
+  from { border-radius: 10px; }
+  25%  { border-radius: 50%; }
+  75%  { border-radius: 50%; }
+  to   { border-radius: 10px; }
+}
+.player-info { flex: 1; min-width: 0; }
+#playerTrack {
+  font-size: 12px; font-weight: 600; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+#playerArtist {
+  font-size: 11px; color: var(--subtext); margin-top: 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.player-controls {
+  display: flex; align-items: center; gap: 8px; margin-top: 8px;
+}
+#playerBtn {
+  background: var(--accent); border: none; border-radius: 50%;
+  width: 24px; height: 24px; cursor: pointer; font-size: 10px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--bg); font-weight: 700;
+  transition: transform 0.15s, background 0.2s;
+  flex-shrink: 0;
+}
+#playerBtn:hover { transform: scale(1.1); }
+#playerVolume {
+  width: 64px; accent-color: var(--accent); cursor: pointer;
+  height: 3px;
+}
+.player-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px; color: var(--subtext); opacity: 0.6;
+  letter-spacing: 0.5px;
+}
+#playerProgress {
+  width: 100%; height: 2px;
+  background: var(--surface2);
+  border-radius: 2px; margin-top: 6px;
+  overflow: hidden;
+}
+#playerProgressFill {
+  height: 100%; width: 0%;
+  background: var(--accent); border-radius: 2px;
+  transition: width 0.5s linear;
+}
+#playerDismiss {
+  background: none; border: none; color: var(--subtext);
+  cursor: pointer; font-size: 18px; padding: 0; line-height: 1;
+  opacity: 0.5; transition: opacity 0.2s;
+  align-self: flex-start;
+  flex-shrink: 0;
+}
+#playerDismiss:hover { opacity: 1; }
+
+/* Player waveform viz */
+.player-wave {
+  display: flex; align-items: flex-end; gap: 2px; height: 16px;
+}
+.pw-bar {
+  width: 2px; background: var(--accent); border-radius: 2px;
+  opacity: 0.7;
+}
+.pw-bar.playing {
+  animation: pwbar 0.6s ease-in-out infinite alternate;
+}
+.pw-bar:nth-child(1) { animation-delay: 0s; }
+.pw-bar:nth-child(2) { animation-delay: 0.1s; }
+.pw-bar:nth-child(3) { animation-delay: 0.2s; }
+.pw-bar:nth-child(4) { animation-delay: 0.3s; }
+.pw-bar:nth-child(5) { animation-delay: 0.15s; }
+@keyframes pwbar { from { height: 3px; } to { height: 14px; } }
+
+/* ─── MAIN LAYOUT ────────────────────────────────────────────────── */
+.container {
+  position: relative; z-index: 1;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  grid-template-rows: auto 1fr;
+  gap: 0;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px 100px;
+}
+
+/* ─── PHONE FRAME ────────────────────────────────────────────────── */
+.phone-col {
+  grid-row: 1 / 3;
+  display: flex;
+  align-items: flex-start;
+  padding-top: 0;
+  position: sticky;
+  top: 40px;
+  align-self: start;
+}
+
+.phone-frame {
+  width: 290px;
+  background: #111;
+  border-radius: 48px;
+  padding: 6px;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.07),
+    0 40px 100px rgba(0,0,0,0.85),
+    0 0 60px var(--glow),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+  transition: box-shadow var(--transition);
+  animation: floatPhone 6s ease-in-out infinite;
+}
+
+@keyframes floatPhone {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.phone-screen {
+  background: var(--phone-bg);
+  border-radius: 42px;
+  overflow: hidden;
+  height: 600px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  transition: background var(--transition);
+}
+
+/* Dynamic Island */
+.d-island {
+  position: absolute; top: 12px; left: 50%;
+  transform: translateX(-50%);
+  width: 90px; height: 28px;
+  background: #000; border-radius: 20px;
+  z-index: 20;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: pointer;
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.03);
+  overflow: hidden;
+}
+.d-island:hover { width: 210px; }
+.d-island .dot { width: 7px; height: 7px; background: #1a1a1a; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.12); flex-shrink: 0; }
+.d-island .spotify-peek {
+  display: none; align-items: center; gap: 6px;
+  font-family: 'DM Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.75);
+  white-space: nowrap; overflow: hidden;
+}
+.d-island:hover .spotify-peek { display: flex; }
+.d-island:hover .dot { display: none; }
+.mini-bars { display: flex; align-items: flex-end; gap: 2px; height: 14px; }
+.mini-bar {
+  width: 3px; background: var(--accent); border-radius: 2px;
+  animation: mbar 0.8s ease-in-out infinite alternate;
+}
+.mini-bar:nth-child(1) { animation-delay: 0s; }
+.mini-bar:nth-child(2) { animation-delay: 0.15s; }
+.mini-bar:nth-child(3) { animation-delay: 0.3s; }
+@keyframes mbar { from { height: 4px; } to { height: 14px; } }
+
+/* Status bar */
+.status-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 24px 0;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; font-weight: 500;
+  color: var(--text); flex-shrink: 0;
+}
+.status-right { display: flex; gap: 5px; align-items: center; font-size: 10px; }
+
+/* Phone slides system */
+.phone-slides-wrapper { flex: 1; overflow: hidden; position: relative; }
+.phone-slides {
+  display: flex; height: 100%;
+  will-change: transform;
+  transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.phone-slide {
+  flex: 0 0 100%; overflow-y: auto; overflow-x: hidden;
+  padding: 12px 16px 16px; scroll-behavior: smooth;
+}
+.phone-slide::-webkit-scrollbar { display: none; }
+/* Page indicator dots */
+.page-dots { display: flex; justify-content: center; gap: 5px; padding: 5px 0 3px; flex-shrink: 0; }
+.page-dot {
+  height: 4px; width: 4px; border-radius: 50%;
+  background: var(--subtext); opacity: 0.3;
+  transition: width 0.25s ease, opacity 0.25s ease, background var(--transition);
+}
+.page-dot.active { width: 14px; border-radius: 3px; opacity: 1; background: var(--accent); }
+/* Phone mini commit grid */
+.phone-commit-grid { display: grid; grid-template-columns: repeat(16, 1fr); gap: 3px; margin-top: 4px; }
+
+/* Weather hero */
+.weather-hero {
+  border-radius: 20px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 20px;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+  transition: background var(--transition), border-color var(--transition);
+}
+.weather-hero::before {
+  content: '';
+  position: absolute; top: -30px; right: -30px;
+  width: 120px; height: 120px;
+  background: var(--accent);
+  border-radius: 50%;
+  opacity: 0.06;
+  filter: blur(20px);
+}
+.weather-big-temp {
+  font-family: 'Syne', sans-serif;
+  font-size: 48px; font-weight: 800;
+  color: var(--accent); line-height: 1;
+  filter: drop-shadow(0 0 20px color-mix(in srgb, var(--accent) 40%, transparent));
+  transition: color var(--transition), filter var(--transition);
+}
+.weather-emoji-big { font-size: 36px; margin-bottom: 4px; display: block; }
+.weather-desc-text {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px; color: var(--subtext);
+  text-transform: uppercase; letter-spacing: 1.5px;
+  margin-top: 4px;
+}
+.weather-details {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 0; margin-top: 12px;
+  padding-top: 12px; border-top: 1px solid var(--border);
+}
+.wd-item {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  color: var(--subtext); text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.wd-val { font-size: 13px; color: var(--text); font-weight: 600; }
+
+/* Section labels */
+.sec-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--subtext); opacity: 0.7;
+  margin: 14px 0 8px;
+}
+
+/* AI bio card */
+.ai-card {
+  border-radius: 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 14px;
+  font-size: 12px; line-height: 1.6;
+  color: var(--text); opacity: 0.9;
+  transition: border-color var(--transition);
+  min-height: 60px;
+  height: auto;
+  overflow: visible;
+  word-break: break-word;
+}
+.ai-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; color: var(--accent);
+  margin-bottom: 6px; display: block;
+}
+
+/* Spotify card */
+.spotify-card {
+  border-radius: 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 12px 14px;
+  display: flex; align-items: center; gap: 12px;
+  transition: border-color var(--transition), transform 0.2s;
+  cursor: pointer; text-decoration: none;
+}
+.spotify-card:hover { transform: scale(1.02); border-color: var(--accent); }
+.spotify-thumb {
+  width: 44px; height: 44px; border-radius: 8px;
+  background: var(--surface2);
+  flex-shrink: 0; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+}
+.spotify-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.spotify-info { flex: 1; min-width: 0; }
+.spotify-track { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.spotify-artist { font-size: 11px; color: var(--subtext); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.spotify-status { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--accent); margin-top: 4px; }
+.spotify-bars { display: flex; align-items: flex-end; gap: 2px; height: 18px; flex-shrink: 0; }
+.sp-bar {
+  width: 3px; background: var(--accent); border-radius: 2px; opacity: 0.8;
+  animation: spbar 0.7s ease-in-out infinite alternate;
+}
+.sp-bar:nth-child(1) { animation-delay: 0s; }
+.sp-bar:nth-child(2) { animation-delay: 0.12s; }
+.sp-bar:nth-child(3) { animation-delay: 0.24s; }
+.sp-bar:nth-child(4) { animation-delay: 0.36s; }
+@keyframes spbar { from { height: 4px; } to { height: 18px; } }
+.sp-bar.paused { animation-play-state: paused; height: 6px !important; }
+
+/* Stack chips */
+.chip-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.chip {
+  display: flex; align-items: center; gap: 5px;
+  padding: 4px 10px; border-radius: 20px;
+  background: var(--surface2); border: 1px solid var(--border);
+  font-size: 11px; color: var(--text);
+  transition: border-color 0.2s, transform 0.2s;
+}
+.chip:hover { border-color: var(--accent); transform: translateY(-1px); }
+.chip-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+/* Stats */
+.stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.stat-card {
+  border-radius: 14px; background: var(--surface2);
+  border: 1px solid var(--border); padding: 14px;
+  text-align: center; transition: border-color var(--transition);
+}
+.stat-val { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700; color: var(--accent); }
+.stat-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--subtext); margin-top: 2px; }
+
+/* Roast card */
+.roast-card {
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(255,107,107,0.06), rgba(255,107,107,0.02));
+  border: 1px solid rgba(255,107,107,0.2);
+  padding: 14px; display: flex; gap: 10px; align-items: flex-start;
+  margin-bottom: 12px;
+}
+.roast-icon { font-size: 18px; flex-shrink: 0; }
+.roast-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--roast); margin-bottom: 4px; }
+.roast-text { font-size: 11px; line-height: 1.6; color: var(--text); opacity: 0.8; font-style: italic; }
+
+/* Phone bottom nav */
+.phone-nav {
+  display: flex; justify-content: space-around;
+  padding: 12px 16px 20px;
+  border-top: 1px solid var(--border);
+  background: color-mix(in srgb, var(--phone-bg) 90%, transparent);
+  backdrop-filter: blur(10px);
+  flex-shrink: 0;
+}
+.nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; }
+.nav-ico { font-size: 18px; }
+.nav-dot { width: 4px; height: 4px; border-radius: 50%; background: transparent; transition: background 0.2s; }
+.nav-item.active .nav-dot { background: var(--accent); }
+
+/* ─── RIGHT PANEL ────────────────────────────────────────────────── */
+.right-panel {
+  padding: 0 0 0 40px;
+  display: flex; flex-direction: column; gap: 24px;
+}
+
+.hero-name {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(36px, 5vw, 58px);
+  font-weight: 800;
+  line-height: 1.0;
+  color: var(--text);
+  letter-spacing: -1.5px;
+  transition: color var(--transition);
+}
+.hero-name .accent-word { color: var(--accent); transition: color var(--transition); }
+.hero-handle {
+  font-family: 'DM Mono', monospace;
+  font-size: 14px; color: var(--subtext);
+  margin-top: 8px; letter-spacing: 0.5px;
+}
+.hero-tagline {
+  font-size: 15px; color: var(--subtext);
+  margin-top: 10px; line-height: 1.6;
+  max-width: 480px;
+}
+.live-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 20px; padding: 5px 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; color: var(--subtext);
+  margin-top: 14px;
+}
+.hero-meta-row {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+  margin-top: 14px;
+}
+.porto-link-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  border-radius: 20px; padding: 5px 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; color: var(--accent);
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s;
+  letter-spacing: 0.3px;
+}
+.porto-link-badge:hover {
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  border-color: var(--accent);
+}
+.pulse-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--accent);
+  animation: pulse 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
+}
+
+.section-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--subtext); opacity: 0.6;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 24px;
+  transition: border-color var(--transition), background var(--transition);
+}
+.card:hover { border-color: color-mix(in srgb, var(--accent) 35%, transparent); }
+
+.project-list { display: flex; flex-direction: column; gap: 12px; }
+.project-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
+  cursor: pointer; text-decoration: none; color: inherit;
+  transition: all 0.2s;
+}
+.project-item:hover {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--surface2) 80%, transparent);
+  transform: translateX(4px);
+}
+.proj-icon { font-size: 24px; flex-shrink: 0; }
+.proj-info { flex: 1; }
+.proj-name { font-weight: 600; font-size: 14px; color: var(--text); }
+.proj-stack { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--subtext); margin-top: 3px; }
+.proj-arrow { color: var(--subtext); font-size: 18px; opacity: 0.5; transition: opacity 0.2s, transform 0.2s; }
+.project-item:hover .proj-arrow { opacity: 1; transform: translateX(3px); }
+
+.gh-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+.gh-stat {
+  text-align: center; padding: 16px 8px;
+  border-radius: 14px; border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 50%, transparent);
+}
+.gh-num { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; color: var(--accent); }
+.gh-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--subtext); margin-top: 4px; }
+
+.commit-grid {
+  display: grid;
+  grid-template-columns: repeat(26, 1fr);
+  gap: 3px;
+}
+.cc {
+  aspect-ratio: 1;
+  border-radius: 2px;
+  background: var(--surface2);
+  transition: background var(--transition);
+}
+.cc.l1 { background: color-mix(in srgb, var(--accent) 25%, var(--surface2)); }
+.cc.l2 { background: color-mix(in srgb, var(--accent) 50%, var(--surface2)); }
+.cc.l3 { background: color-mix(in srgb, var(--accent) 75%, var(--surface2)); }
+.cc.l4 { background: var(--accent); }
+
+.readme-preview-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 24px;
+}
+.readme-preview-card img {
+  width: 100%; border-radius: 12px;
+  border: 1px solid var(--border);
+}
+.readme-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; color: var(--subtext);
+  margin-top: 10px; display: flex; align-items: center; gap: 8px;
+}
+
+/* ─── BOTTOM WEATHER BAR ─────────────────────────────────────────── */
+.bottom-bar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  z-index: 50;
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-top: 1px solid var(--border);
+  padding: 10px 24px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: all var(--transition);
+}
+.weather-pill {
+  display: flex; align-items: center; gap: 8px;
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  color: var(--subtext);
+}
+.weather-pill .temp-big { font-size: 16px; font-weight: 500; color: var(--accent); }
+.divider { opacity: 0.2; }
+
+/* ─── RESPONSIVE ─────────────────────────────────────────────────── */
+@media (max-width: 800px) {
+  .container {
+    grid-template-columns: 1fr;
+    padding: 20px 16px 80px;
+  }
+  .phone-col {
+    position: relative; top: 0;
+    justify-content: center;
+    margin-bottom: 32px;
+  }
+  .right-panel { padding: 0; }
+  #musicPlayer { right: 12px; bottom: 60px; min-width: 200px; }
+}
+
+/* ─── ANIMATIONS ─────────────────────────────────────────────────── */
+.fade-in { animation: fadeIn 0.6s ease both; }
+.fade-up { animation: fadeUp 0.7s ease both; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+[data-delay="1"] { animation-delay: 0.1s; }
+[data-delay="2"] { animation-delay: 0.2s; }
+[data-delay="3"] { animation-delay: 0.3s; }
+[data-delay="4"] { animation-delay: 0.4s; }
+[data-delay="5"] { animation-delay: 0.5s; }
+[data-delay="6"] { animation-delay: 0.6s; }
+
+.skeleton {
+  background: linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px; color: transparent;
+}
+@keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+/* ─── WEATHER CANVAS ────────────────────────────────────────────── */
+#weatherCanvas {
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 1;
+  opacity: 1;
+}
+
+/* ─── GITHUB META ROW ───────────────────────────────────────────── */
+.gh-meta {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; color: var(--subtext);
+  display: none; align-items: center; gap: 10px;
+  margin-bottom: 12px;
+  padding: 7px 12px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--surface2) 50%, transparent);
+  border: 1px solid var(--border);
+  transition: all var(--transition);
+}
+.gh-meta-streak { color: var(--accent); }
+.gh-meta-sep { opacity: 0.3; }
+
+/* ─── SIMULATION PANEL ───────────────────────────────────────────── */
+#simPanel {
+  position: fixed;
+  bottom: 56px;
+  right: 16px;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+#simToggle {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 85%, transparent);
+  backdrop-filter: blur(12px);
+  color: var(--subtext);
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+#simToggle:hover { border-color: var(--accent); color: var(--accent); }
+#simToggle.active { border-color: var(--accent); color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--surface)); }
+#simMenu {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 10px;
+  min-width: 162px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+}
+#simMenu.open { display: flex; }
+.sim-menu-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: var(--subtext);
+  opacity: 0.6;
+  padding: 2px 6px 8px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 2px;
+}
+.sim-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: left;
+  width: 100%;
+}
+.sim-btn:hover { background: var(--surface2); border-color: var(--border); }
+.sim-btn.active-sim {
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+#simLiveBtn {
+  color: #ff8080;
+  border-top: 1px solid var(--border);
+  margin-top: 4px;
+  padding-top: 11px;
+}
+#simLiveBtn.active-live {
+  background: rgba(255,128,128,0.12) !important;
+  border-color: rgba(255,128,128,0.4) !important;
+  color: #ff8080 !important;
+}
+#simLiveBtn:hover { background: rgba(255,128,128,0.08) !important; }
+
+/* ─── SCROLL PROGRESS BAR ────────────────────────────────────────── */
+#scrollBar {
+  position: fixed; top: 0; left: 0; z-index: 1000;
+  height: 2px; width: 0%;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  transition: width 0.1s linear, background var(--transition);
+  pointer-events: none;
+  border-radius: 0 2px 2px 0;
+}
+
+/* ─── MALANG TIME STRIP ──────────────────────────────────────────── */
+.malang-time-strip {
+  display: flex; align-items: center; justify-content: center;
+  gap: 5px; margin-top: 10px; padding-top: 8px;
+  border-top: 1px solid var(--border);
+  font-family: 'DM Mono', monospace;
+  font-size: 9px; color: var(--subtext); opacity: 0.85;
+  transition: border-color var(--transition);
+}
+.malang-time-big { font-size: 12px; font-weight: 500; color: var(--accent); letter-spacing: 0.5px; }
+
+/* ─── LAST COMMIT STRIP ──────────────────────────────────────────── */
+.gh-commit {
+  display: none;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; color: var(--subtext);
+  margin-bottom: 12px;
+  padding: 7px 12px;
+  border-radius: 8px;
+  border-left: 2px solid var(--accent);
+  background: color-mix(in srgb, var(--surface2) 30%, transparent);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+/* ─── PHONE PROFILE SCREEN ────────────────────────────────────────── */
+.profile-hero {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 16px 0 12px; text-align: center;
+}
+.profile-avatar {
+  width: 72px; height: 72px; border-radius: 50%;
+  border: 2.5px solid var(--accent);
+  object-fit: cover; margin-bottom: 10px;
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 15%, transparent);
+  transition: border-color var(--transition);
+}
+.profile-name { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: var(--text); }
+.profile-handle { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent); margin-top: 2px; }
+.profile-quote {
+  font-size: 11px; font-style: italic; color: var(--subtext);
+  margin-top: 8px; line-height: 1.5; opacity: 0.85;
+  padding: 6px 10px; border-radius: 8px;
+  border-left: 2px solid var(--accent);
+  background: color-mix(in srgb, var(--surface2) 40%, transparent);
+  text-align: left; align-self: stretch;
+}
+.profile-info-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+.profile-pill {
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  padding: 4px 9px; border-radius: 20px;
+  background: color-mix(in srgb, var(--surface2) 70%, transparent);
+  border: 1px solid var(--border); color: var(--subtext);
+  transition: border-color var(--transition), background var(--transition);
+}
+.profile-bio { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+.profile-bio-item {
+  font-size: 11px; line-height: 1.5; color: var(--text); opacity: 0.85;
+  padding: 5px 8px; border-radius: 8px;
+  background: color-mix(in srgb, var(--surface) 50%, transparent);
+}
+.profile-socials { display: flex; flex-direction: column; gap: 6px; }
+.profile-social-btn {
+/* MUEL arrow morph */
+.proj-arrow { transition: opacity 0.2s; }
+/* easter egg: long-press avatar */
+.profile-taken {
+  font-family: 'Instrument Sans', sans-serif; font-size: 11px;
+  letter-spacing: 0.3px; color: var(--subtext);
+  text-align: center; margin-top: 2px;
+  opacity: 0; transition: opacity 0.6s ease;
+  pointer-events: none; height: 14px;
+}
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 14px; border-radius: 12px;
+  background: color-mix(in srgb, var(--surface2) 60%, transparent);
+  border: 1px solid var(--border);
+  color: var(--text); text-decoration: none;
+  font-size: 12px; font-weight: 500;
+  transition: border-color 0.2s, background 0.2s, color var(--transition);
+}
+.profile-social-btn:hover { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, var(--surface2)); }
+</style>
+</head>
+<body>
+
+<!-- Scroll progress bar -->
+<div id="scrollBar"></div>
+
+<!-- Loading screen -->
+<div id="loading">
+  <div class="loader-text">INITIALIZING · MALANG DATA</div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+</div>
+
+<!-- Music Preview Player -->
+<div id="musicPlayer">
+  <img id="playerArt" src="" alt="album art"/>
+  <div class="player-info">
+    <div id="playerTrack">—</div>
+    <div id="playerArtist">—</div>
+    <div id="playerProgress"><div id="playerProgressFill"></div></div>
+    <div class="player-controls">
+      <button id="playerBtn" onclick="togglePreview()">⏸</button>
+      <input type="range" id="playerVolume" min="0" max="1" step="0.05" value="0.3"
+        oninput="setVolume(this.value)"/>
+      <div class="player-wave">
+        <div class="pw-bar playing" style="height:8px"></div>
+        <div class="pw-bar playing" style="height:12px"></div>
+        <div class="pw-bar playing" style="height:6px"></div>
+        <div class="pw-bar playing" style="height:14px"></div>
+        <div class="pw-bar playing" style="height:9px"></div>
+      </div>
+      <span class="player-label">PREVIEW</span>
+    </div>
+  </div>
+  <button id="playerDismiss" onclick="dismissPlayer()">×</button>
+</div>
+<audio id="previewAudio"></audio>
+
+<!-- Weather particles canvas -->
+<canvas id="weatherCanvas"></canvas>
+
+<!-- Ambient background -->
+<div class="ambient"></div>
+
+<div class="container">
+
+  <!-- ── PHONE COLUMN ── -->
+  <div class="phone-col fade-in">
+    <div class="phone-frame">
+      <div class="phone-screen">
+
+        <!-- Dynamic Island -->
+        <div class="d-island" id="dIsland">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="spotify-peek">
+            <div class="mini-bars">
+              <div class="mini-bar"></div>
+              <div class="mini-bar"></div>
+              <div class="mini-bar"></div>
+            </div>
+            <span id="islandTrack">Loading…</span>
+          </div>
+        </div>
+
+        <!-- Status bar -->
+        <div class="status-bar">
+          <span id="clock" style="font-size:13px;font-weight:500"></span>
+          <div class="status-right">
+            <span>●●●</span>
+            <span>WiFi</span>
+            <span>🔋</span>
+          </div>
+        </div>
+
+        <!-- Swipeable screens -->
+        <div class="phone-slides-wrapper" id="phoneSlidesWrapper">
+          <div class="phone-slides" id="phoneSlides">
+
+            <!-- ── Screen 0: Home ── -->
+            <div class="phone-slide">
+
+          <!-- Weather Hero -->
+          <div class="weather-hero">
+            <span class="weather-emoji-big" id="phoneWeatherEmoji">⛅</span>
+            <div class="weather-big-temp" id="phoneTemp"><span class="skeleton" style="width:80px;display:inline-block;height:48px">&nbsp;</span></div>
+            <div class="weather-desc-text" id="phoneDesc">Loading…</div>
+            <div class="weather-details">
+              <div class="wd-item"><div class="wd-val" id="phoneHumidity">—</div>💧 Humidity</div>
+              <div class="wd-item"><div class="wd-val" id="phoneWind">—</div>💨 Wind</div>
+              <div class="wd-item"><div class="wd-val" id="phoneFeels">—</div>🌡️ Feels</div>
+            </div>
+            <div class="malang-time-strip" id="malangTime">📍 Malang · <span class="malang-time-big">—:— WIB</span></div>
+          </div>
+
+          <!-- AI vibe -->
+          <div class="sec-label">✨ ai daily vibe</div>
+          <div class="ai-card">
+            <span class="ai-tag" id="aiTag">GEMINI · TODAY</span>
+            <span id="phoneBio" class="skeleton" style="display:block;height:40px;border-radius:6px">&nbsp;</span>
+          </div>
+
+          <!-- Spotify -->
+          <div class="sec-label">🎵 listening</div>
+          <a class="spotify-card" id="spotifyCard" href="#" target="_blank">
+            <div class="spotify-thumb" id="spotifyThumb">🎵</div>
+            <div class="spotify-info">
+              <div class="spotify-track" id="spotifyTrack">Loading…</div>
+              <div class="spotify-artist" id="spotifyArtist">—</div>
+              <div class="spotify-status" id="spotifyStatus">RECENTLY PLAYED</div>
+            </div>
+            <div class="spotify-bars">
+              <div class="sp-bar" id="spBar1"></div>
+              <div class="sp-bar" id="spBar2"></div>
+              <div class="sp-bar" id="spBar3"></div>
+              <div class="sp-bar" id="spBar4"></div>
+            </div>
+          </a>
+
+          <!-- Roast (home) -->
+          <div class="roast-card" style="margin-top:12px">
+            <div class="roast-icon">🔥</div>
+            <div>
+              <div class="roast-label">AI ROAST · DAILY</div>
+              <div class="roast-text" id="phoneRoastHome">Loading roast…</div>
+            </div>
+          </div>
+
+            </div><!-- /screen 0 -->
+
+            <!-- ── Screen 1: Stats ── -->
+            <div class="phone-slide">
+              <div class="sec-label">📊 github activity</div>
+              <div class="stats-row">
+                <div class="stat-card">
+                  <div class="stat-val" id="phoneRepos">—</div>
+                  <div class="stat-label">Public Repos</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-val" id="phoneFollowers">—</div>
+                  <div class="stat-label">Followers</div>
+                </div>
+              </div>
+              <div class="gh-meta" id="phoneGhMeta"></div>
+              <div class="gh-commit" id="phoneGhCommit"></div>
+              <div class="sec-label" style="margin-top:14px">📅 contributions</div>
+              <div class="phone-commit-grid" id="phoneCommitGrid"></div>
+            </div><!-- /screen 1 -->
+
+            <!-- ── Screen 2: Stack ── -->
+            <div class="phone-slide">
+              <div class="sec-label">⚡ stack</div>
+              <div class="chip-grid">
+                <div class="chip"><div class="chip-dot" style="background:#7F52FF"></div>Kotlin</div>
+                <div class="chip"><div class="chip-dot" style="background:#ED8B00"></div>Java</div>
+                <div class="chip"><div class="chip-dot" style="background:#FF9900"></div>Firebase</div>
+                <div class="chip"><div class="chip-dot" style="background:#4285F4"></div>GCP</div>
+                <div class="chip"><div class="chip-dot" style="background:#3670A0"></div>Python</div>
+                <div class="chip"><div class="chip-dot" style="background:#00599C"></div>C++</div>
+              </div>
+              <div class="sec-label">📱 projects</div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <a href="https://github.com/oktavsm/muel-app" target="_blank" style="text-decoration:none" class="project-item">
+                  <div class="proj-icon" style="font-size:18px">💜</div>
+                  <div class="proj-info"><div class="proj-name">MUEL App</div><div class="proj-stack">Kotlin · Firebase · GCP</div></div>
+                  <div class="proj-arrow">→</div>
+                </a>
+                <a href="https://github.com/oktavsm/ngiritin-app" target="_blank" style="text-decoration:none" class="project-item">
+                  <div class="proj-icon" style="font-size:18px">💰</div>
+                  <div class="proj-info"><div class="proj-name">Ngiritin App</div><div class="proj-stack">Kotlin · Android · AI</div></div>
+                  <div class="proj-arrow">→</div>
+                </a>
+                <a href="https://github.com/oktavsm/dicoding-event" target="_blank" style="text-decoration:none" class="project-item">
+                  <div class="proj-icon" style="font-size:18px">📡</div>
+                  <div class="proj-info"><div class="proj-name">Dicoding Event</div><div class="proj-stack">Kotlin · REST API · Room</div></div>
+                  <div class="proj-arrow">→</div>
+                </a>
+              </div>
+              <div class="sec-label" style="margin-top:12px">🔥 roast</div>
+              <div class="roast-card">
+                <div class="roast-icon">🔥</div>
+                <div>
+                  <div class="roast-label">AI ROAST · DAILY</div>
+                  <div class="roast-text" id="phoneRoast">Loading roast…</div>
+                </div>
+              </div>
+            </div><!-- /screen 2 -->
+
+            <!-- ── Screen 3: Profile ── -->
+            <div class="phone-slide">
+              <div class="profile-hero">
+                <img class="profile-avatar" id="profileAvatar" src="" alt="avatar" onerror="this.style.display='none'"/>
+                <div class="profile-name">Oktavianus S. M.</div>
+                <div class="profile-handle">@oktavsm</div>
+                <div class="profile-taken" id="profileTaken">taken by amnd.</div>
+                <div class="profile-quote">“I move with the flow, not with the noise.”</div>
+              </div>
+              <div class="profile-info-row">
+                <div class="profile-pill">🎓 TI · UB · 2024</div>
+                <div class="profile-pill">📍 Malang</div>
+                <div class="profile-pill">🏙️ from Sampit</div>
+                <div class="profile-pill">🐱 Cat lover</div>
+              </div>
+              <div class="sec-label">💬 about</div>
+              <div class="profile-bio">
+                <div class="profile-bio-item">📱 Building mobile apps for academic &amp; personal projects</div>
+                <div class="profile-bio-item">🤝 Open to collab on beginner–intermediate Android projects</div>
+                <div class="profile-bio-item">🌱 Learning Android dev &amp; software engineering</div>
+                <div class="profile-bio-item">💬 Ask me about Java, basic Android &amp; programming logic</div>
+                <div class="profile-bio-item">⚡ Turning ideas into simple apps</div>
+              </div>
+              <div class="sec-label">🔗 links</div>
+              <div class="profile-socials">
+                <a href="https://instagram.com/oktaavsm" target="_blank" class="profile-social-btn">
+                  <span>📸</span> Instagram <span style="font-family:'DM Mono',monospace;font-size:9px;opacity:0.5;margin-left:auto">@oktaavsm</span>
+                </a>
+                <a href="https://linkedin.com/in/oktaavsm" target="_blank" class="profile-social-btn">
+                  <span>💼</span> LinkedIn <span style="font-family:'DM Mono',monospace;font-size:9px;opacity:0.5;margin-left:auto">@oktaavsm</span>
+                </a>
+                <a href="https://github.com/oktavsm" target="_blank" class="profile-social-btn">
+                  <span>🐙</span> GitHub <span style="font-family:'DM Mono',monospace;font-size:9px;opacity:0.5;margin-left:auto">@oktavsm</span>
+                </a>
+              </div>
+            </div><!-- /screen 3 -->
+
+          </div><!-- /phoneSlides -->
+        </div><!-- /phoneSlidesWrapper -->
+
+        <!-- Page indicator dots -->
+        <div class="page-dots" id="pageDots">
+          <div class="page-dot active"></div>
+          <div class="page-dot"></div>
+          <div class="page-dot"></div>
+          <div class="page-dot"></div>
+        </div>
+
+        <!-- Bottom nav -->
+        <div class="phone-nav">
+          <div class="nav-item active" id="navItem0" onclick="gotoSlide(0)"><div class="nav-ico">🏠</div><div class="nav-dot"></div></div>
+          <div class="nav-item" id="navItem1" onclick="gotoSlide(1)"><div class="nav-ico">📊</div><div class="nav-dot"></div></div>
+          <div class="nav-item" id="navItem2" onclick="gotoSlide(2)"><div class="nav-ico">⚡</div><div class="nav-dot"></div></div>
+          <div class="nav-item" id="navItem3" onclick="gotoSlide(3)"><div class="nav-ico">👤</div><div class="nav-dot"></div></div>
+        </div>
+
+      </div><!-- /phone-screen -->
+    </div><!-- /phone-frame -->
+  </div><!-- /phone-col -->
+
+  <!-- ── RIGHT PANEL ── -->
+  <div class="right-panel">
+
+    <!-- Hero name -->
+    <div class="fade-up" data-delay="1">
+      <div class="hero-name">Oktavianus<br><span class="accent-word">Samuel</span><br>Minarto</div>
+      <div class="hero-handle">@oktavsm</div>
+      <div class="hero-tagline">Android Developer in the making · Brawijaya University<br>Turning ideas into apps, one commit at a time ☕</div>
+      <div class="hero-meta-row">
+        <div class="live-badge" style="margin-top:0">
+          <div class="pulse-dot"></div>
+          <span id="liveLabel">Updated by GitHub Actions · every 1h</span>
+        </div>
+        <a class="porto-link-badge" href="https://muelsm.site" target="_blank" rel="noopener">
+          🌐 muelsm.site
+        </a>
+      </div>
+    </div>
+
+    <!-- Projects -->
+    <div class="card fade-up" data-delay="2">
+      <div class="section-title">📱 Featured Projects</div>
+      <div class="project-list">
+        <a class="project-item" href="https://github.com/oktavsm/muel-app" target="_blank">
+          <div class="proj-icon">💜</div>
+          <div class="proj-info">
+            <div class="proj-name">MUEL App</div>
+            <div class="proj-stack">Kotlin · Firebase · GCP</div>
+          </div>
+          <div class="proj-arrow">→</div>
+        </a>
+        <a class="project-item" href="https://github.com/oktavsm/dicoding-ubfaculties" target="_blank">
+          <div class="proj-icon">🏛️</div>
+          <div class="proj-info">
+            <div class="proj-name">UB Faculties</div>
+            <div class="proj-stack">Kotlin · Android Views</div>
+          </div>
+          <div class="proj-arrow">→</div>
+        </a>
+        <a class="project-item" href="https://github.com/oktavsm/ngiritin-app" target="_blank">
+          <div class="proj-icon">💰</div>
+          <div class="proj-info">
+            <div class="proj-name">Ngiritin App</div>
+            <div class="proj-stack">Kotlin · Android · AI</div>
+          </div>
+          <div class="proj-arrow">→</div>
+        </a>
+        <a class="project-item" href="https://github.com/oktavsm/dicoding-event" target="_blank">
+          <div class="proj-icon">📡</div>
+          <div class="proj-info">
+            <div class="proj-name">Dicoding Event</div>
+            <div class="proj-stack">Kotlin · REST API · WorkManager · Room</div>
+          </div>
+          <div class="proj-arrow">→</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- GitHub activity -->
+    <div class="card fade-up" data-delay="3">
+      <div class="section-title">📊 GitHub Activity</div>
+      <div class="gh-grid">
+        <div class="gh-stat">
+          <div class="gh-num" id="ghRepos">—</div>
+          <div class="gh-label">Repos</div>
+        </div>
+        <div class="gh-stat">
+          <div class="gh-num" id="ghFollowers">—</div>
+          <div class="gh-label">Followers</div>
+        </div>
+        <div class="gh-stat">
+          <div class="gh-num">Kotlin</div>
+          <div class="gh-label">Top Language</div>
+        </div>
+      </div>
+      <div class="gh-meta" id="ghMeta"></div>
+      <div class="gh-commit" id="ghCommit"></div>
+      <div class="commit-grid" id="commitGrid"></div>
+    </div>
+
+    <!-- GitHub README preview -->
+    <div class="readme-preview-card fade-up" data-delay="4">
+      <div class="section-title">🖼️ GitHub README · Live Preview</div>
+      <img id="readmePreview" src="/readme.svg" alt="GitHub Profile Card" onerror="this.style.display='none'">
+      <div class="readme-label">
+        <div class="pulse-dot" style="width:5px;height:5px"></div>
+        Auto-updates from this server · used in <a href="https://github.com/oktavsm" target="_blank" style="color:var(--accent)">github.com/oktavsm</a>
+      </div>
+    </div>
+
+  </div><!-- /right-panel -->
+</div><!-- /container -->
+
+<!-- Bottom weather bar -->
+<div class="bottom-bar" id="bottomBar">
+  <div class="weather-pill">
+    <span id="barEmoji">⛅</span>
+    <span class="temp-big" id="barTemp">—°C</span>
+    <span id="barDesc" style="opacity:0.6">Malang</span>
+  </div>
+  <span class="divider">·</span>
+  <div class="weather-pill">
+    <span id="barTrack" style="opacity:0.6">Loading…</span>
+  </div>
+  <span class="divider">·</span>
+  <div class="weather-pill">
+    <span id="barTime" style="opacity:0.5"></span>
+  </div>
+  <span class="divider" id="simDivider" style="display:none">·</span>
+  <div class="weather-pill" id="simBadge" style="display:none">
+    <span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--accent)">⚙ SIM</span>
+  </div>
+</div>
+
+<!-- Weather Simulation Panel -->
+<div id="simPanel">
+  <button id="simToggle" onclick="toggleSimPanel()">🌦 SIM</button>
+  <div id="simMenu">
+    <div class="sim-menu-title">WEATHER SIM</div>
+    <button class="sim-btn" data-sim="sunny"  onclick="simulateWeather('sunny')">☀️  Sunny</button>
+    <button class="sim-btn" data-sim="cloudy" onclick="simulateWeather('cloudy')">⛅  Cloudy</button>
+    <button class="sim-btn" data-sim="rainy"  onclick="simulateWeather('rainy')">🌧️  Rainy</button>
+    <button class="sim-btn" data-sim="storm"  onclick="simulateWeather('storm')">⛈️  Storm</button>
+    <button class="sim-btn" id="simLiveBtn" onclick="setLiveMode()">● Live Mode</button>
+  </div>
+</div>
+
+<script>
+const API_BASE = window.location.origin;
+
+const themeMap = {
+  sunny:  { emoji: '☀️',  bodyClass: 'sunny'  },
+  rainy:  { emoji: '🌧️', bodyClass: 'rainy'  },
+  storm:  { emoji: '⛈️', bodyClass: 'storm'  },
+  cloudy: { emoji: '⛅',  bodyClass: ''       },
+};
+
+// ─── CLOCK ─────────────────────────────────────────────────────────
+function updateClock() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  document.getElementById('clock').textContent = `${h}:${m}`;
+  document.getElementById('barTime').textContent = now.toLocaleDateString('id-ID', { weekday:'short', day:'numeric', month:'short' });
+  const wib = new Date().toLocaleTimeString('id-ID', { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit', hour12: false });
+  const malangEl = document.getElementById('malangTime');
+  if (malangEl) malangEl.innerHTML = `📍 Malang · <span class="malang-time-big">${wib} WIB</span>`;
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+// ─── COMMIT GRID ───────────────────────────────────────────────────
+function buildCommitGrid() {
+  const levels = ['','l1','l2','l3','l4'];
+  const weights = [28,22,22,16,12];
+  const total = weights.reduce((a,b)=>a+b,0);
+  function fillGrid(el, count) {
+    for (let i = 0; i < count; i++) {
+      let r = Math.random() * total, lvl = '';
+      for (let j = 0; j < weights.length; j++) { r -= weights[j]; if (r <= 0) { lvl = levels[j]; break; } }
+      const cell = document.createElement('div'); cell.className = 'cc ' + lvl; el.appendChild(cell);
+    }
+  }
+  fillGrid(document.getElementById('commitGrid'), 26 * 7);
+  const pg = document.getElementById('phoneCommitGrid');
+  if (pg) fillGrid(pg, 16 * 5);
+}
+buildCommitGrid();
+
+// ─── WEATHER PARTICLES ─────────────────────────────────────────────
+const wCanvas = document.getElementById('weatherCanvas');
+const wCtx    = wCanvas.getContext('2d');
+let wParticles   = [];
+let wMode        = 'cloudy';
+let lightningTimer  = null;
+let lightningActive = false;
+
+const accentRGB = { sunny: '255,179,71', rainy: '91,200,245', storm: '167,139,250', cloudy: '86,207,170' };
+let trailParticles = [];
+let trailAccentRGB = accentRGB.cloudy;
+
+document.addEventListener('mousemove', (e) => {
+  trailParticles.push({ x: e.clientX, y: e.clientY, r: 3.5, opacity: 0.8, rgb: trailAccentRGB });
+  if (trailParticles.length > 28) trailParticles.shift();
+}, { passive: true });
+
+function resizeWCanvas() {
+  wCanvas.width  = window.innerWidth;
+  wCanvas.height = window.innerHeight;
+  createWParticles(wMode);
+}
+window.addEventListener('resize', resizeWCanvas);
+resizeWCanvas();
+
+function createWParticles(mode) {
+  wParticles = [];
+  const n = mode === 'storm' ? 130 : mode === 'rainy' ? 100 : mode === 'sunny' ? 55 : 0;
+  for (let i = 0; i < n; i++) {
+    if (mode === 'rainy' || mode === 'storm') {
+      wParticles.push({
+        x: Math.random() * wCanvas.width,
+        y: Math.random() * wCanvas.height,
+        len: Math.random() * 18 + 8,
+        speed: Math.random() * 6 + 7,
+        opacity: Math.random() * 0.32 + 0.07,
+        w: Math.random() * 0.8 + 0.4,
+      });
+    } else if (mode === 'sunny') {
+      wParticles.push({
+        x: Math.random() * wCanvas.width,
+        y: Math.random() * wCanvas.height,
+        r: Math.random() * 2 + 0.5,
+        speed: Math.random() * 0.4 + 0.15,
+        opacity: Math.random() * 0.4 + 0.08,
+        drift: (Math.random() - 0.5) * 0.4,
+        phase: Math.random() * Math.PI * 2,
+      });
+    }
+  }
+}
+
+function drawWParticles(ts) {
+  wCtx.clearRect(0, 0, wCanvas.width, wCanvas.height);
+  if (wMode === 'rainy' || wMode === 'storm') {
+    const c = wMode === 'storm' ? 'rgba(167,139,250,' : 'rgba(91,200,245,';
+    for (const p of wParticles) {
+      wCtx.beginPath();
+      wCtx.strokeStyle = c + p.opacity + ')';
+      wCtx.lineWidth = p.w;
+      wCtx.moveTo(p.x, p.y);
+      wCtx.lineTo(p.x - 2, p.y + p.len);
+      wCtx.stroke();
+      p.y += p.speed; p.x -= 1;
+      if (p.y > wCanvas.height) { p.y = -p.len; p.x = Math.random() * wCanvas.width; }
+    }
+    if (lightningActive) {
+      wCtx.fillStyle = 'rgba(167,139,250,0.07)';
+      wCtx.fillRect(0, 0, wCanvas.width, wCanvas.height);
+    }
+  } else if (wMode === 'sunny') {
+    for (const p of wParticles) {
+      const pulse = Math.sin(ts * 0.0008 + p.phase) * 0.3 + 0.7;
+      wCtx.beginPath();
+      wCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      wCtx.fillStyle = `rgba(255,179,71,${p.opacity * pulse})`;
+      wCtx.fill();
+      p.y -= p.speed; p.x += p.drift;
+      if (p.y < -4) { p.y = wCanvas.height + 4; p.x = Math.random() * wCanvas.width; }
+    }
+  }
+  // ─ cursor trail
+  for (let i = trailParticles.length - 1; i >= 0; i--) {
+    const tp = trailParticles[i];
+    wCtx.beginPath();
+    wCtx.arc(tp.x, tp.y, tp.r * tp.opacity, 0, Math.PI * 2);
+    wCtx.fillStyle = `rgba(${tp.rgb},${tp.opacity * 0.5})`;
+    wCtx.fill();
+    tp.opacity -= 0.042;
+    if (tp.opacity <= 0) trailParticles.splice(i, 1);
+  }
+  requestAnimationFrame(drawWParticles);
+}
+
+function triggerLightning() {
+  lightningActive = true;
+  setTimeout(() => {
+    lightningActive = false;
+    setTimeout(() => {
+      lightningActive = true;
+      setTimeout(() => { lightningActive = false; }, 60);
+    }, 130);
+  }, 90);
+}
+
+function scheduleLightning() {
+  if (wMode !== 'storm') return;
+  lightningTimer = setTimeout(() => {
+    triggerLightning();
+    scheduleLightning();
+  }, Math.random() * 5500 + 2500);
+}
+
+function setParticleMode(mode) {
+  wMode = mode;
+  createWParticles(mode);
+  clearTimeout(lightningTimer);
+  if (mode === 'storm') scheduleLightning();
+}
+
+requestAnimationFrame(drawWParticles);
+
+// ─── SIMULATION MODE ───────────────────────────────────────────────
+let simMode = false;
+
+const simWeatherData = {
+  sunny:  { temp: 33, feels: 36, desc: 'clear sky',    humidity: 45, wind: 8,  theme: 'sunny'  },
+  rainy:  { temp: 22, feels: 21, desc: 'heavy rain',   humidity: 88, wind: 20, theme: 'rainy'  },
+  storm:  { temp: 18, feels: 16, desc: 'thunderstorm', humidity: 95, wind: 45, theme: 'storm'  },
+  cloudy: { temp: 25, feels: 26, desc: 'partly cloudy',humidity: 70, wind: 12, theme: 'cloudy' },
+};
+
+const simEmoji = { sunny: '☀️', rainy: '🌧️', storm: '⛈️', cloudy: '⛅' };
+
+function toggleSimPanel() {
+  const menu   = document.getElementById('simMenu');
+  const toggle = document.getElementById('simToggle');
+  const open   = menu.classList.toggle('open');
+  toggle.classList.toggle('active', open);
+}
+
+function simulateWeather(type) {
+  simMode = true;
+  applyWeather(simWeatherData[type]);
+  document.querySelectorAll('.sim-btn[data-sim]').forEach(b =>
+    b.classList.toggle('active-sim', b.dataset.sim === type)
+  );
+  document.getElementById('simLiveBtn').classList.remove('active-live');
+  document.getElementById('simToggle').textContent = simEmoji[type] + ' SIM';
+  document.getElementById('simBadge').style.display = '';
+  document.getElementById('simDivider').style.display = '';
+  history.replaceState(null, '', '?sim=' + type);
+}
+
+function setLiveMode() {
+  simMode = false;
+  document.querySelectorAll('.sim-btn[data-sim]').forEach(b => b.classList.remove('active-sim'));
+  document.getElementById('simLiveBtn').classList.add('active-live');
+  document.getElementById('simToggle').textContent = '🌦 SIM';
+  document.getElementById('simBadge').style.display = 'none';
+  document.getElementById('simDivider').style.display = 'none';
+  history.replaceState(null, '', window.location.pathname);
+  loadData();
+}
+
+// ─── THEME ─────────────────────────────────────────────────────────
+function applyTheme(theme) {
+  const t = themeMap[theme] || themeMap.cloudy;
+  document.body.className = t.bodyClass;
+  document.getElementById('phoneWeatherEmoji').textContent = t.emoji;
+  document.getElementById('barEmoji').textContent = t.emoji;
+  setParticleMode(theme);
+  trailAccentRGB = accentRGB[theme] || accentRGB.cloudy;
+}
+
+function applyWeather(w) {
+  if (!w) return;
+  applyTheme(w.theme);
+  document.getElementById('phoneTemp').textContent = `${w.temp}°C`;
+  document.getElementById('phoneDesc').textContent = w.desc;
+  document.getElementById('phoneHumidity').textContent = `${w.humidity}%`;
+  document.getElementById('phoneWind').textContent = `${w.wind} km/h`;
+  document.getElementById('phoneFeels').textContent = `${w.feels}°C`;
+  document.getElementById('barTemp').textContent = `${w.temp}°C`;
+  document.getElementById('barDesc').textContent = w.desc;
+}
+
+function applySpotify(s) {
+  if (!s) {
+    document.getElementById('spotifyTrack').textContent = 'Not playing';
+    document.getElementById('spotifyArtist').textContent = '—';
+    return;
+  }
+  document.getElementById('spotifyTrack').textContent = s.track;
+  document.getElementById('spotifyArtist').textContent = s.artist;
+  document.getElementById('spotifyStatus').textContent = s.isPlaying ? '▶ NOW PLAYING' : '⏸ RECENTLY PLAYED';
+  document.getElementById('spotifyCard').href = s.url || '#';
+  document.getElementById('islandTrack').textContent = s.track.length > 20 ? s.track.substring(0,20)+'…' : s.track;
+  document.getElementById('barTrack').textContent = `🎵 ${s.track.substring(0,28)}`;
+  if (s.albumArt) {
+    const thumb = document.getElementById('spotifyThumb');
+    const img = document.createElement('img');
+    img.src = s.albumArt; img.alt = s.album;
+    thumb.innerHTML = ''; thumb.appendChild(img);
+  }
+  const bars = document.querySelectorAll('.sp-bar');
+  bars.forEach(b => b.classList.toggle('paused', !s.isPlaying));
+}
+
+let _typingTimer = null;
+function typeText(el, text, speed) {
+  clearInterval(_typingTimer);
+  el.textContent = '';
+  el.style.borderRight = '1.5px solid var(--accent)';
+  el.style.paddingRight = '2px';
+  let i = 0;
+  _typingTimer = setInterval(() => {
+    if (i < text.length) {
+      el.textContent += text[i++];
+    } else {
+      clearInterval(_typingTimer);
+      setTimeout(() => { el.style.borderRight = 'none'; el.style.paddingRight = ''; }, 900);
+    }
+  }, speed || 26);
+}
+
+function relativeTime(iso) {
+  const h = Math.floor((Date.now() - new Date(iso).getTime()) / 3600000);
+  if (h < 1) return 'just now';
+  if (h < 24) return `${h}h ago`;
+  const d = Math.floor(h / 24);
+  if (d === 1) return 'yesterday';
+  if (d < 30) return `${d}d ago`;
+  return `${Math.floor(d / 30)}mo ago`;
+}
+
+function applyGemini(g) {
+  if (!g) return;
+  const bioEl = document.getElementById('phoneBio');
+  bioEl.className = '';
+  bioEl.style.height = '';
+  bioEl.style.display = '';
+  typeText(bioEl, g.bio);
+  document.getElementById('phoneRoast').textContent = g.roast;
+  const homeRoast = document.getElementById('phoneRoastHome');
+  if (homeRoast) homeRoast.textContent = g.roast;
+}
+
+function applyGithub(gh) {
+  if (!gh) return;
+  document.getElementById('phoneRepos').textContent = gh.repos;
+  document.getElementById('phoneFollowers').textContent = gh.followers;
+  document.getElementById('ghRepos').textContent = gh.repos;
+  document.getElementById('ghFollowers').textContent = gh.followers;
+  const avatarEl = document.getElementById('profileAvatar');
+  if (avatarEl && gh.avatar) { avatarEl.src = gh.avatar; avatarEl.style.display = ''; }
+  const streakHtml = gh.streak > 0
+    ? `<span class="gh-meta-streak">🔥 ${gh.streak} day streak</span>`
+    : `<span>no current streak</span>`;
+  const pushHtml = gh.lastPush
+    ? `<span class="gh-meta-sep">·</span><span>🕐 last push: ${relativeTime(gh.lastPush)}</span>`
+    : '';
+  ['ghMeta','phoneGhMeta'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.innerHTML = streakHtml + pushHtml; el.style.display = 'flex'; }
+  });
+  if (gh.lastCommitMsg) {
+    const repo = gh.lastCommitRepo ? `[${gh.lastCommitRepo}] ` : '';
+    const msg  = gh.lastCommitMsg.length > 52 ? gh.lastCommitMsg.substring(0, 52) + '…' : gh.lastCommitMsg;
+    const cText = `💬 ${repo}${msg}`;
+    ['ghCommit','phoneGhCommit'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.textContent = cText; el.style.display = 'block'; }
+    });
+  }
+}
+
+async function loadData() {
+  try {
+    const res = await fetch(`${API_BASE}/api/data`);
+    if (!res.ok) throw new Error('API error');
+    const data = await res.json();
+    if (!simMode) applyWeather(data.weather);
+    applySpotify(data.spotify);
+    applyGemini(data.gemini);
+    applyGithub(data.github);
+    // Refresh SVG readme preview dengan cache-buster
+    const svg = document.getElementById('readmePreview');
+    if (svg) svg.src = '/readme.svg?t=' + Date.now();
+  } catch (err) {
+    console.warn('API unavailable');
+    if (!simMode) {
+      applyTheme('cloudy');
+      document.getElementById('phoneTemp').textContent = '26°C';
+      document.getElementById('phoneDesc').textContent = 'Partly Cloudy';
+      document.getElementById('phoneHumidity').textContent = '72%';
+      document.getElementById('phoneWind').textContent = '12 km/h';
+      document.getElementById('phoneFeels').textContent = '25°C';
+      document.getElementById('barTemp').textContent = '26°C';
+      document.getElementById('barDesc').textContent = 'Malang';
+    }
+    const bioElFallback = document.getElementById('phoneBio');
+    bioElFallback.textContent = 'Building things in Malang ☕';
+    bioElFallback.className = '';
+    bioElFallback.style.height = '';
+    bioElFallback.style.display = '';
+    document.getElementById('phoneRoast').textContent = 'Your README is still using 2019 badge generators.';
+    const homeRoastFb = document.getElementById('phoneRoastHome');
+    if (homeRoastFb) homeRoastFb.textContent = 'Your README is still using 2019 badge generators.';
+    document.getElementById('spotifyTrack').textContent = 'To The Bone';
+    document.getElementById('spotifyArtist').textContent = 'Pamungkas';
+    document.getElementById('barTrack').textContent = '🎵 To The Bone — Pamungkas';
+    document.getElementById('islandTrack').textContent = 'To The Bone';
+    document.getElementById('phoneRepos').textContent = '27';
+    document.getElementById('phoneFollowers').textContent = '5';
+    document.getElementById('ghRepos').textContent = '27';
+    document.getElementById('ghFollowers').textContent = '5';
+  }
+}
+
+// ─── MUSIC PREVIEW PLAYER ──────────────────────────────────────────
+const previewAudio = document.getElementById('previewAudio');
+const playerEl     = document.getElementById('musicPlayer');
+let progressTimer  = null;
+let currentTrack   = null;
+
+function setVolume(val) {
+  previewAudio.volume = parseFloat(val);
+  document.getElementById('playerVolume').value = val;
+}
+
+function updateProgress() {
+  if (!previewAudio.duration) return;
+  const pct = (previewAudio.currentTime / previewAudio.duration) * 100;
+  document.getElementById('playerProgressFill').style.width = pct + '%';
+}
+
+function startProgressTimer() {
+  clearInterval(progressTimer);
+  progressTimer = setInterval(updateProgress, 500);
+}
+
+function stopProgressTimer() {
+  clearInterval(progressTimer);
+}
+
+function togglePreview() {
+  if (previewAudio.paused) {
+    previewAudio.play();
+    document.getElementById('playerBtn').textContent = '⏸';
+    document.querySelectorAll('.pw-bar').forEach(b => b.classList.add('playing'));
+    document.getElementById('playerArt').classList.add('spinning');
+    startProgressTimer();
+  } else {
+    previewAudio.pause();
+    document.getElementById('playerBtn').textContent = '▶';
+    document.querySelectorAll('.pw-bar').forEach(b => b.classList.remove('playing'));
+    document.getElementById('playerArt').classList.remove('spinning');
+    stopProgressTimer();
+  }
+}
+
+function dismissPlayer() {
+  previewAudio.pause();
+  stopProgressTimer();
+  playerEl.classList.remove('visible');
+  setTimeout(() => { playerEl.style.display = 'none'; }, 800);
+}
+
+async function initPreview() {
+  try {
+    const d = await fetch(`${API_BASE}/api/preview`).then(r => r.json());
+    if (!d.preview_url) return;
+    if (d.track === currentTrack) return; // same track, skip
+    currentTrack = d.track;
+
+    previewAudio.src = d.preview_url;
+    previewAudio.volume = 0;
+    previewAudio.loop = true;
+
+    document.getElementById('playerTrack').textContent = d.track;
+    document.getElementById('playerArtist').textContent = d.artist;
+    if (d.albumArt) {
+      document.getElementById('playerArt').src = d.albumArt;
+    }
+    document.getElementById('playerProgressFill').style.width = '0%';
+
+    playerEl.style.display = 'flex';
+
+    // Small delay then try autoplay
+    setTimeout(() => {
+      previewAudio.play().then(() => {
+        // Autoplay succeeded — fade in volume
+        document.getElementById('playerBtn').textContent = '⏸';
+        document.querySelectorAll('.pw-bar').forEach(b => b.classList.add('playing'));
+        document.getElementById('playerArt').classList.add('spinning');
+        startProgressTimer();
+
+        let vol = 0;
+        const fade = setInterval(() => {
+          vol = Math.min(vol + 0.03, 0.3);
+          previewAudio.volume = vol;
+          document.getElementById('playerVolume').value = vol;
+          if (vol >= 0.3) clearInterval(fade);
+        }, 80);
+
+      }).catch(() => {
+        // Autoplay blocked by browser — show player with play button
+        document.getElementById('playerBtn').textContent = '▶';
+        document.querySelectorAll('.pw-bar').forEach(b => b.classList.remove('playing'));
+        previewAudio.volume = 0.3;
+        document.getElementById('playerVolume').value = 0.3;
+      });
+
+      // Fade in player UI
+      playerEl.classList.add('visible');
+    }, 600);
+
+    // When track ends — hide progress, reset
+    previewAudio.onended = () => {
+      document.getElementById('playerBtn').textContent = '▶';
+      document.getElementById('playerProgressFill').style.width = '100%';
+      document.querySelectorAll('.pw-bar').forEach(b => b.classList.remove('playing'));
+      document.getElementById('playerArt').classList.remove('spinning');
+      stopProgressTimer();
+    };
+
+  } catch(e) {
+    console.log('Preview fetch error:', e);
+  }
+}
+
+// ─── PHONE SWIPE ──────────────────────────────────────────────────
+let currentSlide = 0;
+const TOTAL_SLIDES = 4;
+
+function gotoSlide(n) {
+  currentSlide = Math.max(0, Math.min(n, TOTAL_SLIDES - 1));
+  document.getElementById('phoneSlides').style.transform = `translateX(${-currentSlide * 100}%)`;
+  document.querySelectorAll('#pageDots .page-dot').forEach((d, i) =>
+    d.classList.toggle('active', i === currentSlide)
+  );
+  ['navItem0','navItem1','navItem2','navItem3'].forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('active', i === currentSlide);
+  });
+  // reset scroll of the new slide
+  const slides = document.querySelectorAll('#phoneSlides .phone-slide');
+  if (slides[currentSlide]) slides[currentSlide].scrollTop = 0;
+}
+
+function initPhoneSwipe() {
+  const wrapper = document.getElementById('phoneSlidesWrapper');
+  if (!wrapper) return;
+  // ─ Touch (mobile)
+  let tx = 0, ty = 0, dragging = false;
+  wrapper.addEventListener('touchstart', e => {
+    tx = e.touches[0].clientX; ty = e.touches[0].clientY; dragging = false;
+  }, { passive: true });
+  wrapper.addEventListener('touchmove', e => {
+    if (!dragging) {
+      const dx = Math.abs(e.touches[0].clientX - tx);
+      const dy = Math.abs(e.touches[0].clientY - ty);
+      if (dx > dy && dx > 8) dragging = true;
+    }
+    if (dragging) e.preventDefault();
+  }, { passive: false });
+  wrapper.addEventListener('touchend', e => {
+    if (!dragging) return;
+    const diff = e.changedTouches[0].clientX - tx;
+    if (Math.abs(diff) > 40) gotoSlide(diff < 0 ? currentSlide + 1 : currentSlide - 1);
+    dragging = false;
+  }, { passive: true });
+  // ─ Mouse drag (desktop testing)
+  let mx = 0, md = false;
+  wrapper.addEventListener('mousedown', e => { mx = e.clientX; md = true; });
+  window.addEventListener('mouseup', e => {
+    if (!md) return;
+    const diff = e.clientX - mx;
+    if (Math.abs(diff) > 50) gotoSlide(diff < 0 ? currentSlide + 1 : currentSlide - 1);
+    md = false;
+  });
+}
+
+// ─── 3D CARD TILT ──────────────────────────────────────────────────
+function init3DTilt() {
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width  - 0.5;
+      const y = (e.clientY - r.top)  / r.height - 0.5;
+      card.style.transition = 'border-color var(--transition), background var(--transition), transform 0.12s ease';
+      card.style.transform  = `perspective(700px) rotateY(${x * 7}deg) rotateX(${-y * 5}deg) scale(1.012)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transition = 'border-color var(--transition), background var(--transition), transform 0.5s ease';
+      card.style.transform  = 'perspective(700px) rotateY(0deg) rotateX(0deg) scale(1)';
+    });
+  });
+}
+
+// ─── EASTER EGG: long-press avatar → taken by amnd. ─────────────────
+(function initAvatarEgg() {
+  const avatar = document.getElementById('profileAvatar');
+  const label  = document.getElementById('profileTaken');
+  if (!avatar || !label) return;
+  let tid, hideTid;
+  function show() {
+    if (currentSlide !== 3) return;
+    clearTimeout(hideTid);
+    label.style.opacity = '1';
+    hideTid = setTimeout(() => { label.style.opacity = '0'; }, 2800);
+  }
+  // touch: hold 700ms without moving
+  avatar.addEventListener('touchstart', () => { tid = setTimeout(show, 700); }, { passive: true });
+  avatar.addEventListener('touchend',   () => clearTimeout(tid));
+  avatar.addEventListener('touchmove',  () => clearTimeout(tid));
+  // mouse: hold 700ms
+  avatar.addEventListener('mousedown', () => { tid = setTimeout(show, 700); });
+  avatar.addEventListener('mouseup',   () => clearTimeout(tid));
+  avatar.addEventListener('mouseleave',() => clearTimeout(tid));
+})();
+
+// MUEL App arrow morph on hover
+(function initMuelHover() {
+  document.querySelectorAll('a[href*="muel-app"]').forEach(el => {
+    const arrow = el.querySelector('.proj-arrow');
+    if (!arrow) return;
+    let tid;
+    el.addEventListener('mouseenter', () => {
+      clearTimeout(tid);
+      arrow.style.opacity = '0';
+      tid = setTimeout(() => { arrow.textContent = '💜'; arrow.style.opacity = '1'; }, 180);
+    });
+    el.addEventListener('mouseleave', () => {
+      clearTimeout(tid);
+      arrow.style.opacity = '0';
+      tid = setTimeout(() => { arrow.textContent = '→'; arrow.style.opacity = '1'; }, 180);
+    });
+  });
+})();
+
+// ─── SCROLL PROGRESS ───────────────────────────────────────────────
+window.addEventListener('scroll', () => {
+  const max = document.documentElement.scrollHeight - window.innerHeight;
+  document.getElementById('scrollBar').style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
+}, { passive: true });
+
+// ─── INIT ──────────────────────────────────────────────────────────
+window.addEventListener('load', async () => {
+  await loadData();
+  init3DTilt();
+  initPhoneSwipe();
+  const simParam = new URLSearchParams(window.location.search).get('sim');
+  if (simParam && simWeatherData[simParam]) {
+    simulateWeather(simParam);
+  } else {
+    document.getElementById('simLiveBtn').classList.add('active-live');
+  }
+  setInterval(loadData, 3 * 60 * 1000); // refresh every 3 minutes
+
+  // Hide loading screen after 1.8s
+  setTimeout(() => {
+    const loading = document.getElementById('loading');
+    loading.classList.add('hidden');
+    setTimeout(() => {
+      loading.style.display = 'none';
+      // Wait for first user interaction then play
+      let interactionDone = false;
+      function onFirstInteraction() {
+        if (interactionDone) return;
+        interactionDone = true;
+        ['click','scroll','touchstart','keydown'].forEach(e =>
+          document.removeEventListener(e, onFirstInteraction)
+        );
+        setTimeout(initPreview, 300);
+      }
+      ['click','scroll','touchstart','keydown'].forEach(e =>
+        document.addEventListener(e, onFirstInteraction, { passive: true })
+      );
+    }, 500);
+  }, 1800);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DURIO — Premium Durian Marketplace</title>
+  <meta name="description" content="Beli durian premium pilihan langsung dari kebun terbaik. Musang King, D24, Black Thorn & banyak varietas lainnya.">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ── HOME PAGE STYLES ────────────────────────────────── */
+    .hero-section { padding: 20px 0 56px; }
+
+    /* ── BENTO HERO GRID ─────────────────────────────────── */
+    .bento-hero {
+      display: grid;
+      grid-template-columns: 2.2fr 1.3fr 0.9fr;
+      grid-template-rows: 210px 210px 130px;
+      gap: 14px;
+    }
+
+    /* Card 1 — Large hero (col 1, row 1–2) */
+    .bh-main {
+      grid-column: 1; grid-row: 1 / 3;
+      background: #F0E8D4;
+      border-radius: var(--r-lg);
+      padding: 36px;
+      position: relative; overflow: hidden;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      cursor: default;
+      box-shadow: var(--sh-sm);
+      border: 1px solid var(--border-lt);
+      transition: box-shadow var(--tr);
+    }
+    .bh-main:hover { box-shadow: var(--sh-xl); }
+    .bh-main .deco-ring {
+      position: absolute; border-radius: 50%;
+      background: rgba(196,145,28,.1);
+    }
+    .bh-main .deco-ring.r1 { width:360px; height:360px; top:-80px; right:-60px; }
+    .bh-main .deco-ring.r2 { width:220px; height:220px; top:20px; right:40px;
+      background:rgba(196,145,28,.07); }
+    .bh-main-img {
+      position: absolute; top: 0; right: 0;
+      width: 58%; height: 100%;
+      object-fit: contain; object-position: center bottom;
+      filter: drop-shadow(0 12px 32px rgba(80,40,0,.18));
+    }
+    .bh-main-img-ph {
+      position: absolute; top: 0; right: 0;
+      width: 56%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 120px;
+      filter: drop-shadow(0 8px 24px rgba(80,40,0,.15));
+    }
+    .bh-main-content { position: relative; z-index: 2; max-width: 58%; }
+    .bh-eyebrow {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: white; border-radius: var(--r-pill);
+      padding: 4px 12px; font-size: .72rem; font-weight: 700;
+      letter-spacing: .04em; margin-bottom: 16px;
+      box-shadow: var(--sh-xs);
+    }
+    .bh-main h1 {
+      font-size: clamp(1.8rem,2.8vw,2.5rem);
+      font-weight: 900; letter-spacing: -.03em; line-height: 1.1;
+      margin-bottom: 14px; color: #1A1A1A;
+    }
+    .bh-main h1 span { color: var(--gold); }
+    .bh-main p { font-size: .88rem; color: #666; margin-bottom: 22px; max-width: 240px; }
+    .bh-btns { display: flex; gap: 10px; }
+
+    /* Card 2 — Featured product (col 2, row 1–2) */
+    .bh-featured {
+      grid-column: 2; grid-row: 1 / 3;
+      padding: 26px;
+      display: flex; flex-direction: column;
+    }
+    .bh-featured-img {
+      flex: 1; border-radius: var(--r-sm); overflow: hidden; margin-bottom: 16px;
+      min-height: 160px;
+    }
+    .bh-featured-img img { width: 100%; height: 100%; object-fit: cover; }
+    .bh-featured-img-ph {
+      width: 100%; height: 100%; min-height: 160px;
+      background: linear-gradient(135deg,#FBF3DB,#F0C842);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 80px; border-radius: var(--r-sm);
+    }
+    .bh-featured-name { font-size: 1.05rem; font-weight: 800; letter-spacing: -.02em; margin-bottom: 2px; }
+    .bh-featured-origin { font-size: .78rem; color: var(--text-3); margin-bottom: 12px; }
+    .bh-featured-foot {
+      display: flex; align-items: center; justify-content: space-between; margin-top: auto;
+    }
+
+    /* Card 3 — Stats customers (col 3, row 1) */
+    .bh-stat-a {
+      grid-column: 3; grid-row: 1;
+      padding: 24px; display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .bh-stat-a .stat-big { font-size: 2.2rem; font-weight: 900; letter-spacing: -.04em; color: var(--text); margin-top: auto; }
+    .bh-stat-a .stat-label { font-size: .72rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3); }
+
+    /* Card 4 — Rating (col 3, row 2) */
+    .bh-stat-b {
+      grid-column: 3; grid-row: 2;
+      background: var(--text); color: white;
+      padding: 24px; display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .bh-stat-b .stat-tag { font-size: .7rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.45); }
+    .bh-star-group { display: flex; flex-direction: column; gap: 4px; margin-top: auto; }
+    .bh-rating-num { font-size: 2.6rem; font-weight: 900; letter-spacing: -.05em; color: white; line-height: 1; }
+    .bh-rating-sub { font-size: .72rem; color: rgba(255,255,255,.45); }
+
+    /* Card 5 — Promo (col 1, row 3) */
+    .bh-promo {
+      grid-column: 1; grid-row: 3;
+      background: var(--green-dk); color: white;
+      border-radius: var(--r-md);
+      padding: 22px 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      box-shadow: var(--sh-sm);
+    }
+    .bh-promo-text h3 { font-size: 1rem; font-weight: 800; letter-spacing: -.02em; }
+    .bh-promo-text p { font-size: .78rem; color: rgba(255,255,255,.6); margin-top: 2px; }
+    .promo-truck { font-size: 36px; }
+
+    /* Card 6 — Newsletter (col 2–3, row 3) */
+    .bh-news {
+      grid-column: 2 / 4; grid-row: 3;
+      padding: 22px 26px;
+      display: flex; align-items: center; gap: 20px;
+    }
+    .bh-news-icon { font-size: 32px; flex-shrink: 0; }
+    .bh-news-text h3 { font-size: .9rem; font-weight: 700; margin-bottom: 2px; }
+    .bh-news-text p { font-size: .78rem; color: var(--text-2); }
+    .bh-news-form { display: flex; gap: 8px; margin-left: auto; flex-shrink: 0; }
+    .bh-news-form input {
+      width: 200px; height: 38px;
+      border: 1.5px solid var(--border); border-radius: var(--r-pill);
+      padding: 0 16px; font-size: .85rem; background: white;
+    }
+    .bh-news-form input:focus { border-color: var(--gold); outline: none; }
+    .bh-news-form input::placeholder { color: var(--text-3); }
+
+    /* ── VARIETIES SECTION ───────────────────────────────── */
+    .varieties-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+    }
+    .variety-card {
+      border-radius: var(--r-md); padding: 22px;
+      cursor: pointer; position: relative; overflow: hidden;
+      transition: all var(--tr);
+      border: 1px solid var(--border-lt); background: white;
+      box-shadow: var(--sh-xs);
+    }
+    .variety-card:hover { transform: translateY(-4px); box-shadow: var(--sh-lg); }
+    .variety-card .v-emoji { font-size: 48px; margin-bottom: 12px; display: block; }
+    .variety-card .v-name { font-size: .95rem; font-weight: 800; letter-spacing: -.015em; margin-bottom: 4px; }
+    .variety-card .v-origin { font-size: .75rem; color: var(--text-3); margin-bottom: 12px; }
+    .variety-card .v-price { font-size: 1.1rem; font-weight: 800; letter-spacing: -.02em; color: var(--gold); }
+    .variety-card .v-price span { font-size: .75rem; font-weight: 400; color: var(--text-3); }
+    .variety-card .v-arrow {
+      position: absolute; top: 18px; right: 18px;
+      width: 30px; height: 30px; border-radius: 50%;
+      background: var(--border-lt); color: var(--text);
+      display: flex; align-items: center; justify-content: center; font-size: 14px;
+      transition: all var(--tr);
+    }
+    .variety-card:hover .v-arrow { background: var(--text); color: white; }
+
+    /* ── HOW IT WORKS ────────────────────────────────────── */
+    .how-grid {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 14px;
+    }
+    .how-card { padding: 32px; }
+    .how-num {
+      font-size: 3rem; font-weight: 900; letter-spacing: -.05em;
+      color: var(--gold-lt); -webkit-text-stroke: 2px var(--gold);
+      line-height: 1; margin-bottom: 16px;
+    }
+    .how-icon { font-size: 30px; margin-bottom: 12px; }
+    .how-title { font-size: 1rem; font-weight: 700; letter-spacing: -.015em; margin-bottom: 6px; }
+    .how-desc { font-size: .83rem; color: var(--text-2); line-height: 1.65; }
+
+    /* ── TESTIMONIALS ────────────────────────────────────── */
+    .testi-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 14px;
+    }
+    .testi-card { padding: 28px; }
+    .testi-main { grid-column: 1; grid-row: 1 / 3; }
+    .testi-quote { font-size: 1.5rem; color: var(--gold); margin-bottom: 12px; }
+    .testi-text { font-size: .9rem; line-height: 1.7; color: var(--text-2); margin-bottom: 20px; }
+    .testi-text.large { font-size: 1.05rem; }
+    .testi-author { display: flex; align-items: center; gap: 10px; margin-top: auto; }
+    .testi-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--gold-lt); display: flex; align-items: center;
+      justify-content: center; font-size: 20px; flex-shrink: 0;
+    }
+    .testi-name { font-size: .88rem; font-weight: 700; }
+    .testi-role { font-size: .75rem; color: var(--text-3); }
+
+    /* ── STATS BANNER ────────────────────────────────────── */
+    .stats-band {
+      background: var(--text); border-radius: var(--r-lg);
+      padding: 48px; display: grid; grid-template-columns: repeat(4,1fr);
+      gap: 32px; margin: 72px 0;
+    }
+    .stat-item { text-align: center; }
+    .stat-num { font-size: 2.5rem; font-weight: 900; letter-spacing: -.05em; color: white; line-height: 1; }
+    .stat-lng { color: var(--gold); font-size: 2.5rem; }
+    .stat-desc { font-size: .82rem; color: rgba(255,255,255,.45); margin-top: 6px; }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-brand">
+        <div class="nav-logo-icon">🌿</div>
+        <span class="nav-logo-text">DURIO</span>
+      </a>
+      <div class="nav-search">
+        <span class="nav-search-icon">🔍</span>
+        <input type="text" placeholder="Cari varietas durian...">
+      </div>
+      <nav class="nav-links">
+        <a href="index.html" class="nav-link active">Home</a>
+        <a href="marketplace.html" class="nav-link">Marketplace</a>
+        <a href="about.html" class="nav-link">Tentang Kami</a>
+        <a href="cart.html" class="nav-link">Keranjang</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="nav-btn">🤍</button>
+        <button class="nav-btn" onclick="window.location='cart.html'">
+          🛒<span class="badge-dot">3</span>
+        </button>
+        <div class="nav-avatar">👤</div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main>
+    <div class="container">
+
+      <!-- ── HERO SECTION ──────────────────────────────── -->
+      <section class="hero-section">
+        <!-- Category Tabs -->
+        <div class="cat-tabs">
+          <button class="cat-tab active">Semua</button>
+          <button class="cat-tab">Musang King</button>
+          <button class="cat-tab">D24</button>
+          <button class="cat-tab">Black Thorn</button>
+          <button class="cat-tab">D101</button>
+          <button class="cat-tab">XO</button>
+          <button class="cat-tab">Red Prawn</button>
+          <button class="cat-tab">Organik</button>
+        </div>
+
+        <!-- Bento Grid -->
+        <div class="bento-hero">
+
+          <!-- Card 1: HERO MAIN -->
+          <div class="bh-main">
+            <div class="deco-ring r1"></div>
+            <div class="deco-ring r2"></div>
+            <!-- Hero image -->
+            <div class="bh-main-img-ph">🌟</div>
+            <img src="assets/images/hero.png" class="bh-main-img" alt="Premium Durian" onerror="this.style.display='none'">
+            <div class="bh-main-content">
+              <div class="bh-eyebrow">🏆 &nbsp;Premium Quality Certified</div>
+              <h1>Raja Buah, <span>Hadir</span><br>di Pintumu.</h1>
+              <p>Durian premium pilihan dari kebun terbaik Malaysia & Indonesia, dikirim segar ke seluruh nusantara.</p>
+              <div class="bh-btns">
+                <a href="marketplace.html" class="btn btn-primary btn-lg">Belanja Sekarang →</a>
+                <a href="about.html" class="btn btn-outline btn-lg">Tentang Kami</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2: FEATURED PRODUCT -->
+          <div class="card bh-featured">
+            <div class="flex justify-between items-center mb-12">
+              <span class="badge badge-gold">⭐ Best Seller</span>
+              <button class="wish-btn arrow-btn light" style="background:var(--border-lt)">🤍</button>
+            </div>
+            <div class="bh-featured-img">
+              <img src="assets/images/musang-king.png" alt="Musang King"
+                   style="width:100%;height:100%;object-fit:cover;"
+                   onerror="this.parentElement.innerHTML='<div class=\'bh-featured-img-ph\'>🍈</div>'">
+            </div>
+            <div class="bh-featured-name mt-16">Musang King</div>
+            <div class="bh-featured-origin">📍 Pahang, Malaysia</div>
+            <div class="rating-row mb-12">
+              <span class="stars">★★★★★</span>
+              <span class="rating-score">4.9</span>
+              <span class="rating-count">(2.1k ulasan)</span>
+            </div>
+            <div class="bh-featured-foot">
+              <div>
+                <div class="price">Rp 185.000</div>
+                <div class="price-unit">per kilogram</div>
+              </div>
+              <a href="product.html" class="arrow-btn">→</a>
+            </div>
+          </div>
+
+          <!-- Card 3: CUSTOMERS STAT -->
+          <div class="card bh-stat-a">
+            <div class="flex justify-between items-start">
+              <span class="badge badge-green">🟢 Live</span>
+              <span style="font-size:22px">👥</span>
+            </div>
+            <div>
+              <div class="stat-big">2,4K+</div>
+              <div class="stat-label">Pelanggan Puas</div>
+            </div>
+          </div>
+
+          <!-- Card 4: RATING STAT -->
+          <div class="card bh-stat-b" style="border-radius:var(--r-md)">
+            <div class="stat-tag">Avg Rating</div>
+            <div class="bh-star-group">
+              <div class="bh-rating-num">4.9</div>
+              <div class="stars" style="color:#F5B327;font-size:1.1rem;">★★★★★</div>
+              <div class="bh-rating-sub">dari 12.000+ ulasan</div>
+            </div>
+          </div>
+
+          <!-- Card 5: PROMO BANNER -->
+          <div class="bh-promo">
+            <div class="bh-promo-text">
+              <h3>🚚 Gratis Ongkos Kirim Hari Ini</h3>
+              <p>Untuk pembelian di atas Rp 500.000 ke seluruh Indonesia</p>
+            </div>
+            <a href="marketplace.html" class="btn btn-white btn-sm">Belanja →</a>
+          </div>
+
+          <!-- Card 6: NEWSLETTER -->
+          <div class="card bh-news">
+            <span class="bh-news-icon">📧</span>
+            <div class="bh-news-text">
+              <h3>Dapatkan Penawaran Eksklusif</h3>
+              <p>Subscribe & hemat hingga 30% untuk pembelian pertama</p>
+            </div>
+            <div class="bh-news-form">
+              <input type="email" placeholder="Email kamu...">
+              <button class="btn btn-primary btn-sm" onclick="showToast('Berhasil subscribe! 🎉','📧')">Subscribe</button>
+            </div>
+          </div>
+
+        </div><!-- end bento-hero -->
+      </section>
+
+      <!-- ── VARIETIES SECTION ──────────────────────────── -->
+      <section class="section-sm reveal">
+        <div class="section-header">
+          <div>
+            <div class="section-eyebrow">Koleksi Kami</div>
+            <div class="section-title">Eksplorasi Varietas Premium</div>
+          </div>
+          <a href="marketplace.html" class="btn btn-outline btn-sm">Lihat Semua →</a>
+        </div>
+        <div class="varieties-grid">
+          <div class="variety-card" onclick="window.location='marketplace.html'">
+            <div class="v-arrow">↗</div>
+            <span class="v-emoji">👑</span>
+            <div class="v-name">Musang King</div>
+            <div class="v-origin">📍 Malaysia</div>
+            <div class="rating-row mb-12"><span class="stars">★★★★★</span><span class="rating-score" style="font-size:.8rem">4.9</span></div>
+            <div class="v-price">Rp 185.000 <span>/kg</span></div>
+          </div>
+          <div class="variety-card" onclick="window.location='marketplace.html'">
+            <div class="v-arrow">↗</div>
+            <span class="v-emoji">🌿</span>
+            <div class="v-name">D24 Sultan</div>
+            <div class="v-origin">📍 Johor, Malaysia</div>
+            <div class="rating-row mb-12"><span class="stars">★★★★☆</span><span class="rating-score" style="font-size:.8rem">4.7</span></div>
+            <div class="v-price">Rp 130.000 <span>/kg</span></div>
+          </div>
+          <div class="variety-card" onclick="window.location='marketplace.html'">
+            <div class="v-arrow">↗</div>
+            <span class="v-emoji">⚫</span>
+            <div class="v-name">Black Thorn</div>
+            <div class="v-origin">📍 Penang, Malaysia</div>
+            <div class="rating-row mb-12"><span class="stars">★★★★★</span><span class="rating-score" style="font-size:.8rem">4.8</span></div>
+            <div class="v-price">Rp 220.000 <span>/kg</span></div>
+          </div>
+          <div class="variety-card" onclick="window.location='marketplace.html'">
+            <div class="v-arrow">↗</div>
+            <span class="v-emoji">🍂</span>
+            <div class="v-name">D101</div>
+            <div class="v-origin">📍 Medan, Indonesia</div>
+            <div class="rating-row mb-12"><span class="stars">★★★★☆</span><span class="rating-score" style="font-size:.8rem">4.5</span></div>
+            <div class="v-price">Rp 95.000 <span>/kg</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── STATS BAND ─────────────────────────────────── -->
+      <div class="stats-band reveal">
+        <div class="stat-item">
+          <div class="stat-num">12<span class="stat-lng">+</span></div>
+          <div class="stat-desc">Varietas Premium</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">2.4<span class="stat-lng">K</span></div>
+          <div class="stat-desc">Pelanggan Aktif</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">98<span class="stat-lng">%</span></div>
+          <div class="stat-desc">Tingkat Kepuasan</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">24<span class="stat-lng">H</span></div>
+          <div class="stat-desc">Pengiriman Segar</div>
+        </div>
+      </div>
+
+      <!-- ── HOW IT WORKS ───────────────────────────────── -->
+      <section class="section-sm reveal">
+        <div class="section-header">
+          <div>
+            <div class="section-eyebrow">Cara Kerja</div>
+            <div class="section-title">Mudah & Terpercaya</div>
+          </div>
+        </div>
+        <div class="how-grid">
+          <div class="card how-card">
+            <div class="how-num">01</div>
+            <div class="how-icon">🔍</div>
+            <div class="how-title">Pilih Varietas</div>
+            <div class="how-desc">Browse koleksi durian premium kami dari berbagai varietas terbaik Malaysia dan Indonesia.</div>
+          </div>
+          <div class="card how-card">
+            <div class="how-num">02</div>
+            <div class="how-icon">🛒</div>
+            <div class="how-title">Pesan & Bayar</div>
+            <div class="how-desc">Proses pemesanan yang mudah dengan berbagai metode pembayaran aman dan terpercaya.</div>
+          </div>
+          <div class="card how-card">
+            <div class="how-num">03</div>
+            <div class="how-icon">📦</div>
+            <div class="how-title">Terima Segar</div>
+            <div class="how-desc">Durian dikemas khusus dan dikirim dalam 24 jam. Dijamin segar sampai di tanganmu!</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── TESTIMONIALS ──────────────────────────────── -->
+      <section class="section reveal">
+        <div class="section-header">
+          <div>
+            <div class="section-eyebrow">Ulasan Pelanggan</div>
+            <div class="section-title">Kata Mereka 💬</div>
+          </div>
+          <a href="marketplace.html" class="btn btn-outline btn-sm">Beli Sekarang →</a>
+        </div>
+        <div class="testi-grid">
+          <!-- Large testimonial -->
+          <div class="card testi-card testi-main" style="display:flex;flex-direction:column;">
+            <div class="testi-quote">"</div>
+            <div class="testi-text large">Musang King dari DURIO benar-benar terbaik yang pernah saya makan. Kualitasnya konsisten, pengirimannya cepat, dan packagingnya sangat premium. Sudah langganan 6 bulan dan tidak pernah kecewa!</div>
+            <div class="rating-row mb-16"><span class="stars">★★★★★</span></div>
+            <div class="testi-author mt-16" style="margin-top:auto">
+              <div class="testi-avatar">👩</div>
+              <div>
+                <div class="testi-name">Sarah Wijaya</div>
+                <div class="testi-role">Pelanggan Setia, Jakarta</div>
+              </div>
+            </div>
+          </div>
+          <!-- Small testimonials -->
+          <div class="card testi-card">
+            <div class="testi-quote" style="font-size:1.1rem">"</div>
+            <div class="testi-text">Black Thorn-nya luar biasa! Rasanya creamy dan manis banget. Packaging-nya aman sampai.</div>
+            <div class="rating-row mb-12"><span class="stars">★★★★★</span></div>
+            <div class="testi-author">
+              <div class="testi-avatar">👨</div>
+              <div>
+                <div class="testi-name">Budi Santoso</div>
+                <div class="testi-role">Surabaya</div>
+              </div>
+            </div>
+          </div>
+          <div class="card testi-card card-dark">
+            <div class="testi-quote" style="font-size:1.1rem;color:var(--gold)">"</div>
+            <div class="testi-text" style="color:rgba(255,255,255,.7)">Harga memang lebih premium tapi worth it banget. Kualitasnya jauh di atas pasar biasa!</div>
+            <div class="rating-row mb-12"><span class="stars">★★★★★</span></div>
+            <div class="testi-author">
+              <div class="testi-avatar" style="background:rgba(255,255,255,.1);color:white">👩</div>
+              <div>
+                <div class="testi-name" style="color:white">Rina Kusuma</div>
+                <div class="testi-role" style="color:rgba(255,255,255,.45)">Bandung</div>
+              </div>
+            </div>
+          </div>
+          <div class="card testi-card card-gold">
+            <div style="font-size:2rem;margin-bottom:8px">🏆</div>
+            <div class="testi-text" style="color:rgba(255,255,255,.85);font-size:.85rem">Terpilih sebagai marketplace durian terbaik 2024 oleh komunitas pecinta durian Indonesia.</div>
+          </div>
+          <div class="card testi-card">
+            <div class="testi-quote" style="font-size:1.1rem">"</div>
+            <div class="testi-text">D24 Sultan-nya mantap! Daging tebal, biji kecil, aroma khas yang harum. Recommended!</div>
+            <div class="rating-row mb-12"><span class="stars">★★★★☆</span></div>
+            <div class="testi-author">
+              <div class="testi-avatar">🧑</div>
+              <div>
+                <div class="testi-name">Ahmad Fauzi</div>
+                <div class="testi-role">Medan</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- end container -->
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div style="display:flex;align-items:center;gap:9px;margin-bottom:4px">
+            <div class="nav-logo-icon">🌿</div>
+            <span class="footer-logo-text">DURIO</span>
+          </div>
+          <p class="footer-desc">Marketplace durian premium terpercaya. Langsung dari kebun, dikirim segar ke pintu rumahmu.</p>
+          <div class="social-links">
+            <a href="#" class="social-btn">📘</a>
+            <a href="#" class="social-btn">📸</a>
+            <a href="#" class="social-btn">🐦</a>
+            <a href="#" class="social-btn">▶️</a>
+          </div>
+        </div>
+        <div>
+          <div class="footer-col-title">Navigasi</div>
+          <div class="footer-col-links">
+            <a href="index.html">Beranda</a>
+            <a href="marketplace.html">Marketplace</a>
+            <a href="about.html">Tentang Kami</a>
+            <a href="cart.html">Keranjang</a>
+          </div>
+        </div>
+        <div>
+          <div class="footer-col-title">Varietas</div>
+          <div class="footer-col-links">
+            <a href="marketplace.html">Musang King</a>
+            <a href="marketplace.html">D24 Sultan</a>
+            <a href="marketplace.html">Black Thorn</a>
+            <a href="marketplace.html">D101</a>
+          </div>
+        </div>
+        <div>
+          <div class="footer-col-title">Bantuan</div>
+          <div class="footer-col-links">
+            <a href="#">Cara Pemesanan</a>
+            <a href="#">Kebijakan Pengembalian</a>
+            <a href="#">Syarat & Ketentuan</a>
+            <a href="#">Hubungi Kami</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2024 DURIO. Raja Buah, Hadirkan di Rumahmu.</span>
+        <span>🇮🇩 Indonesia</span>
+      </div>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast"></div>
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+name: Refresh GitHub README
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Bump SVG cache-buster in README
+        run: |
+          TIMESTAMP=$(date +%s)
+          sed -i "s|readme\.svg?t=[0-9]*|readme.svg?t=${TIMESTAMP}|g" README.md
+
+      - name: Trigger backend refresh
+        run: |
+          curl -s -X POST "${{ secrets.SERVER_URL }}/api/refresh" \
+            -H "x-refresh-secret: ${{ secrets.REFRESH_SECRET }}" \
+            -H "Content-Type: application/json" || echo "Refresh call skipped"
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git diff --staged --quiet || git commit -m "chore: refresh profile card [$(date -u +'%Y-%m-%d %H:%M UTC')]"
+          git push

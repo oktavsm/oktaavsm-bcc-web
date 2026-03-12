@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TikSave</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Bricolage+Grotesque:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #07080d;
+  --surf:    #0e0f17;
+  --card:    #12131e;
+  --border:  #1c1d2e;
+  --border2: #252640;
+  --red:     #ff3356;
+  --cyan:    #00e5c3;
+  --gold:    #ffc947;
+  --text:    #dde0f0;
+  --muted:   #4a4d6e;
+  --muted2:  #6c6f96;
+  --fh: 'Bricolage Grotesque', sans-serif;
+  --fm: 'DM Mono', monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body {
+  font-family: var(--fh);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+.bg-noise {
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  opacity:.5;
+}
+.glow {position:fixed;pointer-events:none;z-index:0;border-radius:50%;filter:blur(100px);}
+.g1{width:500px;height:500px;background:rgba(255,51,86,.06);top:-150px;right:-100px;}
+.g2{width:400px;height:400px;background:rgba(0,229,195,.04);bottom:0;left:-80px;}
+
+.wrap {
+  position:relative;z-index:1;
+  max-width:900px;margin:0 auto;
+  padding:40px 20px 100px;
+}
+
+/* HEADER */
+header {
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:40px;
+  animation:slideDown .5s ease both;
+}
+.logo { display:flex;align-items:center;gap:12px; }
+.logo-mark {
+  width:40px;height:40px;background:var(--red);border-radius:10px;
+  display:grid;place-items:center;font-size:20px;
+  box-shadow:0 0 24px rgba(255,51,86,.35);
+}
+.logo-name { font-size:24px;font-weight:800;letter-spacing:-.5px; }
+.logo-name em { color:var(--red);font-style:normal; }
+.pill {
+  background:rgba(0,229,195,.1);border:1px solid rgba(0,229,195,.2);
+  color:var(--cyan);font-family:var(--fm);font-size:10px;letter-spacing:1px;
+  padding:4px 10px;border-radius:20px;
+}
+
+/* TABS */
+.tabs {
+  display:flex;gap:4px;background:var(--surf);
+  border:1px solid var(--border);border-radius:14px;padding:4px;
+  margin-bottom:22px;animation:slideUp .5s .07s ease both;
+}
+.tab {
+  flex:1;padding:10px 8px;background:transparent;border:none;
+  color:var(--muted2);cursor:pointer;font-family:var(--fh);
+  font-size:13px;font-weight:700;border-radius:10px;
+  transition:all .18s;display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.tab:hover:not(.active){color:var(--text);background:var(--border);}
+.tab.active{background:var(--red);color:#fff;box-shadow:0 4px 18px rgba(255,51,86,.3);}
+
+/* PANEL */
+.panel{display:none;}
+.panel.active{display:block;animation:slideUp .3s ease both;}
+
+/* INPUT CARD */
+.input-card {
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:22px;margin-bottom:16px;
+  animation:slideUp .5s .12s ease both;
+}
+.lbl {
+  font-family:var(--fm);font-size:10px;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:block;
+}
+.row{display:flex;gap:8px;}
+.inp {
+  flex:1;background:var(--surf);border:1px solid var(--border2);
+  border-radius:10px;padding:12px 15px;color:var(--text);
+  font-family:var(--fm);font-size:13px;outline:none;
+  transition:border-color .18s,box-shadow .18s;
+}
+.inp::placeholder{color:var(--muted);}
+.inp:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(255,51,86,.1);}
+.btn {
+  background:var(--red);color:#fff;border:none;
+  padding:12px 22px;border-radius:10px;
+  font-family:var(--fh);font-weight:700;font-size:13px;
+  cursor:pointer;transition:all .18s;white-space:nowrap;
+  display:inline-flex;align-items:center;gap:6px;
+}
+.btn:hover{background:#ff1a3d;transform:translateY(-1px);box-shadow:0 6px 22px rgba(255,51,86,.4);}
+.btn:active{transform:translateY(0);}
+.btn:disabled{opacity:.45;pointer-events:none;}
+.hint{font-family:var(--fm);font-size:11px;color:var(--muted);margin-top:10px;}
+
+/* STATE */
+.loading-box{display:none;text-align:center;padding:50px 20px;}
+.loading-box.show{display:block;}
+.spinner{
+  width:32px;height:32px;border-radius:50%;
+  border:2.5px solid var(--border2);border-top-color:var(--red);
+  animation:spin .65s linear infinite;margin:0 auto 14px;
+}
+.loading-txt{font-family:var(--fm);font-size:11px;color:var(--muted);letter-spacing:1.5px;}
+.error-box{
+  display:none;background:rgba(255,51,86,.07);
+  border:1px solid rgba(255,51,86,.2);border-radius:12px;
+  padding:13px 17px;font-family:var(--fm);font-size:12px;
+  color:#ff7a8a;margin-bottom:16px;
+}
+.error-box.show{display:block;}
+
+/* DEBUG box (collapsed by default) */
+.debug-box {
+  display:none;
+  background:rgba(255,201,71,.05);border:1px solid rgba(255,201,71,.15);
+  border-radius:10px;padding:12px 16px;margin-bottom:14px;
+  font-family:var(--fm);font-size:10px;color:var(--gold);
+  word-break:break-all;line-height:1.5;
+}
+.debug-box.show{display:block;}
+
+/* PROFILE */
+.profile-strip{
+  display:flex;align-items:center;gap:16px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:18px 20px;margin-bottom:20px;
+  animation:slideUp .3s ease both;
+}
+.p-av{width:54px;height:54px;border-radius:50%;object-fit:cover;border:2px solid var(--red);flex-shrink:0;}
+.p-name{font-size:17px;font-weight:800;}
+.p-handle{font-family:var(--fm);font-size:11px;color:var(--cyan);margin-top:2px;}
+.p-stats{margin-left:auto;display:flex;gap:22px;text-align:right;}
+.p-n{font-family:var(--fm);font-size:16px;font-weight:500;color:var(--cyan);}
+.p-l{font-family:var(--fm);font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+
+/* RES HEADER */
+.rh{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.rc{font-family:var(--fm);font-size:11px;color:var(--muted);letter-spacing:1px;}
+.rc b{color:var(--cyan);font-weight:500;}
+.btn-sm{
+  background:rgba(0,229,195,.1);border:1px solid rgba(0,229,195,.2);color:var(--cyan);
+  padding:7px 14px;border-radius:8px;font-family:var(--fh);font-weight:700;font-size:11px;
+  cursor:pointer;transition:all .18s;
+}
+.btn-sm:hover{background:rgba(0,229,195,.18);transform:translateY(-1px);}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:14px;}
+
+/* VIDEO CARD */
+.vcard{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;overflow:hidden;
+  transition:transform .2s,border-color .2s,box-shadow .2s;
+  animation:slideUp .35s ease both;
+}
+.vcard:hover{transform:translateY(-4px);border-color:var(--border2);box-shadow:0 12px 36px rgba(0,0,0,.4);}
+.thumb{position:relative;aspect-ratio:9/16;overflow:hidden;background:var(--surf);}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s;}
+.vcard:hover .thumb img{transform:scale(1.04);}
+.thumb-ov{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(0,0,0,.75) 0%,transparent 45%);
+  display:flex;align-items:flex-end;padding:10px;pointer-events:none;
+}
+.plays{font-family:var(--fm);font-size:10px;color:rgba(255,255,255,.75);}
+.tbadge{
+  position:absolute;top:8px;left:8px;
+  font-family:var(--fm);font-size:9px;font-weight:500;
+  padding:3px 8px;border-radius:6px;letter-spacing:.5px;
+}
+.bv{background:var(--red);color:#fff;}
+.bi{background:var(--cyan);color:#07080d;}
+.bs{background:var(--gold);color:#07080d;}
+
+.vinfo{padding:12px;}
+.vdesc{
+  font-size:12px;line-height:1.45;color:var(--text);margin-bottom:8px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.vmeta{display:flex;gap:10px;font-family:var(--fm);font-size:10px;color:var(--muted);margin-bottom:10px;}
+.dl-btn{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  width:100%;padding:9px;background:var(--surf);border:1px solid var(--border2);
+  color:var(--text);border-radius:8px;
+  font-family:var(--fh);font-weight:700;font-size:12px;
+  cursor:pointer;text-decoration:none;transition:all .18s;
+}
+.dl-btn:hover{background:var(--red);border-color:var(--red);box-shadow:0 4px 16px rgba(255,51,86,.3);}
+
+/* SINGLE */
+.single{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;animation:slideUp .35s ease both;}
+.single-top{display:flex;gap:20px;padding:20px;}
+.s-thumb{width:130px;flex-shrink:0;border-radius:10px;overflow:hidden;aspect-ratio:9/16;background:var(--surf);}
+.s-thumb img{width:100%;height:100%;object-fit:cover;}
+.s-meta{flex:1;}
+.s-author{font-family:var(--fm);font-size:11px;color:var(--cyan);margin-bottom:8px;}
+.s-title{font-size:15px;font-weight:700;line-height:1.4;margin-bottom:14px;}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.chip{background:var(--surf);border:1px solid var(--border2);border-radius:7px;padding:5px 11px;font-family:var(--fm);font-size:11px;color:var(--muted);}
+.chip span{color:var(--text);}
+.dl-row{display:flex;flex-wrap:wrap;gap:8px;}
+.dl-v{
+  background:var(--red);color:#fff;border:none;padding:9px 16px;border-radius:8px;
+  font-family:var(--fh);font-weight:700;font-size:12px;cursor:pointer;
+  text-decoration:none;transition:all .18s;display:inline-flex;align-items:center;gap:5px;
+  box-shadow:0 4px 16px rgba(255,51,86,.3);
+}
+.dl-v:hover{background:#ff1a3d;transform:translateY(-1px);}
+.dl-s{
+  background:var(--surf);border:1px solid var(--border2);color:var(--text);
+  padding:9px 16px;border-radius:8px;font-family:var(--fh);font-weight:700;font-size:12px;
+  cursor:pointer;text-decoration:none;transition:all .18s;display:inline-flex;align-items:center;gap:5px;
+}
+.dl-s:hover{background:var(--border2);transform:translateY(-1px);}
+
+.photo-strip{border-top:1px solid var(--border);padding:16px;}
+.photo-strip-lbl{font-family:var(--fm);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+.photo-row{display:flex;gap:10px;flex-wrap:wrap;}
+.photo-item{position:relative;width:90px;aspect-ratio:1;border-radius:8px;overflow:hidden;background:var(--surf);}
+.photo-item img{width:100%;height:100%;object-fit:cover;display:block;}
+.photo-ov{position:absolute;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .18s;text-decoration:none;font-size:20px;}
+.photo-item:hover .photo-ov{opacity:1;}
+
+footer{
+  text-align:center;margin-top:60px;padding-top:22px;
+  border-top:1px solid var(--border);
+  font-family:var(--fm);font-size:11px;color:var(--muted);
+  animation:slideUp .5s .3s ease both;
+}
+footer a{color:var(--red);text-decoration:none;}
+
+@keyframes slideDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUp  {from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)}}
+@keyframes spin     {to{transform:rotate(360deg)}}
+
+@media(max-width:600px){
+  .single-top{flex-direction:column}
+  .s-thumb{width:100%;aspect-ratio:16/9}
+  .p-stats{display:none}
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .tab span{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-noise"></div>
+<div class="glow g1"></div>
+<div class="glow g2"></div>
+
+<div class="wrap">
+
+  <header>
+    <div class="logo">
+      <div class="logo-mark">🎵</div>
+      <div class="logo-name">Tik<em>Save</em></div>
+    </div>
+    <div class="pill">● LOCAL</div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('video')"><span>🎬</span><span>Video URL</span></button>
+    <button class="tab"        onclick="switchTab('batch')"><span>👤</span><span>By Username</span></button>
+    <button class="tab"        onclick="switchTab('story')"><span>📖</span><span>Story</span></button>
+  </div>
+
+  <!-- ═══ VIDEO ═══ -->
+  <div class="panel active" id="tab-video">
+    <div class="input-card">
+      <label class="lbl">Link Video TikTok</label>
+      <div class="row">
+        <input class="inp" id="v-url" placeholder="https://www.tiktok.com/@user/video/... atau vm.tiktok.com/..." type="text">
+        <button class="btn" id="v-btn" onclick="fetchVideo()">↓ Ambil</button>
+      </div>
+      <p class="hint">💡 Mendukung link panjang maupun pendek (vm.tiktok.com)</p>
+    </div>
+    <div class="error-box" id="v-err"></div>
+    <div class="loading-box" id="v-load"><div class="spinner"></div><p class="loading-txt">MENGAMBIL DATA…</p></div>
+    <div id="v-res"></div>
+  </div>
+
+  <!-- ═══ BATCH ═══ -->
+  <div class="panel" id="tab-batch">
+    <div class="input-card">
+      <label class="lbl">Username TikTok (Akun Publik)</label>
+      <div class="row">
+        <input class="inp" id="b-user" placeholder="@namaakun atau namaakun saja" type="text">
+        <button class="btn" id="b-btn" onclick="fetchBatch()">↓ Cari</button>
+      </div>
+      <p class="hint">💡 Mengambil hingga 35 video terbaru · Foto/carousel terdeteksi otomatis</p>
+    </div>
+    <div class="error-box" id="b-err"></div>
+    <div class="loading-box" id="b-load"><div class="spinner"></div><p class="loading-txt">MEMUAT VIDEO…</p></div>
+    <div id="b-res"></div>
+  </div>
+
+  <!-- ═══ STORY ═══ -->
+  <div class="panel" id="tab-story">
+    <div class="input-card">
+      <label class="lbl">Username Pemilik Story</label>
+      <div class="row">
+        <input class="inp" id="s-user" placeholder="@namaakun atau namaakun saja" type="text">
+        <button class="btn" id="s-btn" onclick="fetchStory()">↓ Cari</button>
+      </div>
+      <p class="hint">💡 Hanya akun publik · Semua story bisa didownload sekaligus</p>
+    </div>
+    <div class="error-box"  id="s-err"></div>
+    <div class="debug-box"  id="s-debug"></div>
+    <div class="loading-box" id="s-load"><div class="spinner"></div><p class="loading-txt">MEMUAT STORY…</p></div>
+    <div id="s-res"></div>
+  </div>
+
+  <footer>
+    Powered by <a href="https://tikwm.com" target="_blank">Tikwm API</a> · Untuk keperluan pribadi · Hormati karya kreator 🙏
+  </footer>
+
+</div>
+
+<script>
+// Auto-detect base path (works both :3001 direct and via nginx /tiksave)
+const BASE = window.location.pathname.startsWith("/tiksave") ? "/tiksave" : "";
+
+const $ = id => document.getElementById(id);
+const fmt = n => {
+  if (!n) return '0';
+  if (n >= 1e6) return (n/1e6).toFixed(1)+'M';
+  if (n >= 1e3) return (n/1e3).toFixed(1)+'K';
+  return String(n);
+};
+const clean = u => u.replace(/^@/,'').trim();
+
+function setLoading(p, on) {
+  $(p+'-load').classList.toggle('show', on);
+  const b = $(p+'-btn'); if (b) b.disabled = on;
+}
+function setError(p, msg) {
+  const el = $(p+'-err');
+  el.textContent = msg ? '⚠ '+msg : '';
+  el.classList.toggle('show', !!msg);
+}
+function setDebug(p, msg) {
+  const el = $(p+'-debug');
+  if (!el) return;
+  el.textContent = msg || '';
+  el.classList.toggle('show', !!msg);
+}
+
+function switchTab(name) {
+  ['video','batch','story'].forEach((t,i) => {
+    document.querySelectorAll('.tab')[i].classList.toggle('active', t===name);
+    $('tab-'+t).classList.toggle('active', t===name);
+  });
+}
+
+// ────────────────────────────────────────
+// VIDEO by URL
+// ────────────────────────────────────────
+async function fetchVideo() {
+  const url = $('v-url').value.trim();
+  if (!url) return setError('v','Masukkan URL video TikTok dulu!');
+  setError('v',''); setLoading('v',true); $('v-res').innerHTML='';
+  try {
+    const r = await fetch(`${BASE}/api/video?url=${encodeURIComponent(url)}`);
+    const d = await r.json();
+    if (d.code!==0||!d.data) throw new Error(d.msg||'Gagal mengambil video');
+    renderSingle(d.data);
+  } catch(e) { setError('v', e.message); }
+  finally { setLoading('v',false); }
+}
+
+function renderSingle(d) {
+  const isPhoto = d.images && d.images.length > 0;
+  const a = d.author || {};
+
+  let dlHtml = '';
+  if (isPhoto) {
+    dlHtml = `<span style="font-size:11px;color:var(--muted);font-family:var(--fm)">Foto tersedia di bawah ↓</span>`;
+  } else {
+    dlHtml = `
+      <a class="dl-v" href="${BASE}/proxy?url=${encodeURIComponent(d.play||'')}" download="tiksave_${d.id||Date.now()}.mp4">⬇ HD No WM</a>
+      ${d.wmplay ? `<a class="dl-s" href="${BASE}/proxy?url=${encodeURIComponent(d.wmplay)}" download="tiksave_wm.mp4">🔖 Dengan WM</a>` : ''}
+      ${d.music  ? `<a class="dl-s" href="${BASE}/proxy?url=${encodeURIComponent(d.music)}"  download="tiksave_audio.mp3">🎵 Audio</a>` : ''}
+    `;
+  }
+
+  let photosHtml = '';
+  if (isPhoto) {
+    const items = d.images.map((img,i) => `
+      <div class="photo-item">
+        <img src="${img}" loading="lazy" alt="foto ${i+1}">
+        <a class="photo-ov" href="${BASE}/proxy?url=${encodeURIComponent(img)}" download="tiksave_photo_${i+1}.jpg">⬇</a>
+      </div>
+    `).join('');
+    photosHtml = `
+      <div class="photo-strip">
+        <p class="photo-strip-lbl">Foto / Carousel — ${d.images.length} item</p>
+        <div class="photo-row">${items}</div>
+      </div>
+    `;
+  }
+
+  $('v-res').innerHTML = `
+    <div class="single">
+      <div class="single-top">
+        <div class="s-thumb"><img src="${d.cover||d.origin_cover||''}" alt="thumb"></div>
+        <div class="s-meta">
+          <p class="s-author">@${a.unique_id||'unknown'} · ${a.nickname||''}</p>
+          <p class="s-title">${d.title||'(Tanpa judul)'}</p>
+          <div class="chips">
+            <div class="chip">❤️ <span>${fmt(d.digg_count)}</span></div>
+            <div class="chip">💬 <span>${fmt(d.comment_count)}</span></div>
+            <div class="chip">↗ <span>${fmt(d.share_count)}</span></div>
+            <div class="chip">▶ <span>${fmt(d.play_count)}</span></div>
+          </div>
+          <div class="dl-row">${dlHtml}</div>
+        </div>
+      </div>
+      ${photosHtml}
+    </div>
+  `;
+}
+
+// ────────────────────────────────────────
+// BATCH by Username
+// ────────────────────────────────────────
+async function fetchBatch() {
+  const raw = $('b-user').value.trim();
+  if (!raw) return setError('b','Masukkan username dulu!');
+  const username = clean(raw);
+  setError('b',''); setLoading('b',true); $('b-res').innerHTML='';
+  try {
+    const r = await fetch(`${BASE}/api/user/posts?unique_id=${encodeURIComponent(username)}&count=35&cursor=0`);
+    const d = await r.json();
+    if (d.code !== 0) {
+      if (d.need_rapidapi || d.msg === 'RAPIDAPI_KEY_REQUIRED') {
+        return renderRapidApiSetup();
+      }
+      throw new Error(d.msg || 'User tidak ditemukan atau akun private');
+    }
+    if (!d.data) throw new Error('Response tidak valid');
+    const { videos, author } = d.data;
+    if (!videos||videos.length===0) throw new Error('Tidak ada video ditemukan');
+    renderBatch(author, videos);
+  } catch(e) { setError('b', e.message); }
+  finally { setLoading('b',false); }
+}
+
+function renderRapidApiSetup() {
+  $('b-res').innerHTML = `
+    <div style="background:var(--card);border:1px solid rgba(255,201,71,.25);border-radius:16px;padding:28px 24px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+        <span style="font-size:22px">🔑</span>
+        <span style="font-size:17px;font-weight:800">RapidAPI Key Diperlukan</span>
+      </div>
+      <p style="font-size:13px;color:var(--muted2);line-height:1.7;margin-bottom:20px;">
+        Fitur <b style="color:var(--text)">By Username</b> butuh API key gratis dari RapidAPI karena
+        Tikwm sedang diblokir Cloudflare. Setup cukup sekali, gratis 500 req/bulan.
+      </p>
+      <div style="background:var(--surf);border:1px solid var(--border2);border-radius:12px;padding:16px 18px;margin-bottom:20px;">
+        <p style="font-family:var(--fm);font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;">CARA SETUP</p>
+        <div style="display:flex;flex-direction:column;gap:10px;font-size:12px;line-height:1.6;color:var(--muted2);">
+          <div><span style="color:var(--cyan);font-family:var(--fm);margin-right:8px;">1.</span>Daftar di <a href="https://rapidapi.com" target="_blank" style="color:var(--red);text-decoration:none;">rapidapi.com</a> (gratis, pakai email)</div>
+          <div><span style="color:var(--cyan);font-family:var(--fm);margin-right:8px;">2.</span>Buka <a href="https://rapidapi.com/tikwm-tikwm-default/api/tiktok-scraper7" target="_blank" style="color:var(--red);text-decoration:none;">tiktok-scraper7 API</a> → klik <b style="color:var(--text)">Subscribe to Test</b> → pilih plan <b style="color:var(--text)">Basic (Free)</b></div>
+          <div><span style="color:var(--cyan);font-family:var(--fm);margin-right:8px;">3.</span>Copy API key dari header <b style="color:var(--text)">X-RapidAPI-Key</b></div>
+          <div><span style="color:var(--cyan);font-family:var(--fm);margin-right:8px;">4.</span>Stop server, jalankan ulang dengan:</div>
+        </div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-top:10px;font-family:var(--fm);font-size:12px;color:var(--cyan);">
+          RAPIDAPI_KEY=<span style="color:var(--gold)">isi_key_disini</span> node server.js
+        </div>
+      </div>
+      <p style="font-size:11px;font-family:var(--fm);color:var(--muted);">
+        💡 Video URL & Story tetap bisa dipakai tanpa key
+      </p>
+    </div>
+  `;
+}
+
+function renderBatch(author, videos) {
+  let profileHtml = '';
+  if (author) {
+    profileHtml = `
+      <div class="profile-strip">
+        <img class="p-av" src="${author.avatar_medium||author.avatar_thumb||''}" alt="av">
+        <div>
+          <div class="p-name">${author.nickname||author.unique_id}</div>
+          <div class="p-handle">@${author.unique_id}${author.verified?' · ✅':''}</div>
+        </div>
+        <div class="p-stats">
+          <div><div class="p-n">${fmt(author.follower_count)}</div><div class="p-l">Followers</div></div>
+          <div><div class="p-n">${fmt(author.heart_count)}</div><div class="p-l">Likes</div></div>
+          <div><div class="p-n">${videos.length}</div><div class="p-l">Dimuat</div></div>
+        </div>
+      </div>
+    `;
+  }
+
+  const cards = videos.map((v,i) => {
+    const isPhoto = v.images && v.images.length > 0;
+    const dlHref  = `${BASE}/proxy?url=${encodeURIComponent(isPhoto ? (v.images[0]||'') : (v.play||''))}`;
+    const dlName  = isPhoto ? `tiksave_photo_${i}.jpg` : `tiksave_${v.id||i}.mp4`;
+    return `
+      <div class="vcard" style="animation-delay:${i*.03}s">
+        <div class="thumb">
+          <img src="${v.cover||v.origin_cover||''}" loading="lazy" alt="">
+          <div class="tbadge ${isPhoto?'bi':'bv'}">${isPhoto?'FOTO':'VIDEO'}</div>
+          <div class="thumb-ov"><span class="plays">▶ ${fmt(v.play_count)}</span></div>
+        </div>
+        <div class="vinfo">
+          <p class="vdesc">${v.title||'(Tanpa judul)'}</p>
+          <div class="vmeta">
+            <span>❤️ ${fmt(v.digg_count)}</span>
+            <span>💬 ${fmt(v.comment_count)}</span>
+            ${isPhoto?`<span>🖼 ${v.images.length}</span>`:''}
+          </div>
+          <a class="dl-btn" href="${dlHref}" download="${dlName}">⬇ Download ${isPhoto?'Foto':'Video'}</a>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  $('b-res').innerHTML = `
+    ${profileHtml}
+    <div class="rh">
+      <p class="rc">Ditemukan <b>${videos.length}</b> konten</p>
+    </div>
+    <div class="grid">${cards}</div>
+  `;
+}
+
+// ────────────────────────────────────────
+// STORY  — robust multi-shape parser
+// ────────────────────────────────────────
+async function fetchStory() {
+  const raw = $('s-user').value.trim();
+  if (!raw) return setError('s','Masukkan username dulu!');
+  const username = clean(raw);
+  setError('s',''); setDebug('s',''); setLoading('s',true); $('s-res').innerHTML='';
+
+  try {
+    const r = await fetch(`${BASE}/api/user/story?unique_id=${encodeURIComponent(username)}`);
+    const json = await r.json();
+
+    // Show raw structure in debug box to help diagnose
+    setDebug('s', 'API code: ' + json.code + ' | data type: ' + typeof json.data +
+      (Array.isArray(json.data) ? ' (array len='+json.data.length+')' : '') +
+      ' | keys: ' + (json.data ? Object.keys(json.data).join(', ') : 'null'));
+
+    if (json.code !== 0) throw new Error(json.msg || 'Gagal mengambil story');
+    if (!json.data)      throw new Error('Tidak ada data story');
+
+    // ── Normalise whatever shape the API returns into a flat array ──
+    let stories = [];
+    const raw = json.data;
+
+    if (Array.isArray(raw)) {
+      // Shape A: data is already an array of story objects
+      stories = raw;
+    } else if (raw.aweme_list && Array.isArray(raw.aweme_list)) {
+      // Shape B: { aweme_list: [...] }
+      stories = raw.aweme_list;
+    } else if (raw.props?.pageProps?.serverSideContext?.aweme_list) {
+      // Shape C: nested pageProps
+      stories = raw.props.pageProps.serverSideContext.aweme_list;
+    } else if (raw.StatusList && Array.isArray(raw.StatusList)) {
+      // Shape D: { StatusList: [...] }
+      stories = raw.StatusList;
+    } else if (typeof raw === 'object') {
+      // Shape E: single story object — wrap in array
+      // Detect if it looks like a story (has video_url or image_url or aweme_id)
+      if (raw.video_url || raw.image_url || raw.aweme_id || raw.cover) {
+        stories = [raw];
+      } else {
+        // Try to find any array-valued key
+        const arrKey = Object.keys(raw).find(k => Array.isArray(raw[k]) && raw[k].length > 0);
+        if (arrKey) {
+          stories = raw[arrKey];
+          setDebug('s', `Using key "${arrKey}" → ${stories.length} items`);
+        }
+      }
+    }
+
+    if (stories.length === 0) throw new Error('Tidak ada story aktif saat ini');
+
+    // Normalise each story item to { thumb, videoUrl, imageUrl, type }
+    const normalized = stories.map(s => normalizeStoryItem(s)).filter(Boolean);
+    if (normalized.length === 0) throw new Error('Tidak dapat memproses item story');
+
+    // Hide debug after success
+    setDebug('s', '');
+    renderStories(normalized, username);
+
+  } catch(e) {
+    setError('s', e.message);
+  } finally {
+    setLoading('s', false);
+  }
+}
+
+/**
+ * Tikwm can return story items in several shapes:
+ *  - { video_url, image_url, cover }
+ *  - { video: { play_addr: { url_list } }, cover_data: { cover: { url_list } } }
+ *  - AWeme object with video/image_post fields
+ */
+function normalizeStoryItem(s) {
+  // Shape 1: simple flat object
+  if (s.video_url || s.image_url) {
+    return {
+      type:     s.video_url ? 'video' : 'photo',
+      thumb:    s.cover || s.image_url || '',
+      videoUrl: s.video_url || '',
+      imageUrl: s.image_url || '',
+    };
+  }
+
+  // Shape 2: AWeme-style video object
+  if (s.video || s.image_post_info) {
+    const isPhoto = !!s.image_post_info;
+    let videoUrl = '', imageUrl = '', thumb = '';
+
+    if (!isPhoto && s.video) {
+      const v = s.video;
+      videoUrl = v.play_addr?.url_list?.[0]
+              || v.download_addr?.url_list?.[0]
+              || v.play_addr_h264?.url_list?.[0]
+              || '';
+      thumb    = s.video.cover?.url_list?.[0] || s.cover_data?.cover?.url_list?.[0] || '';
+    }
+
+    if (isPhoto && s.image_post_info?.images) {
+      const imgs = s.image_post_info.images;
+      imageUrl = imgs[0]?.display_image?.url_list?.[0] || '';
+      thumb    = imageUrl;
+    }
+
+    return { type: isPhoto ? 'photo' : 'video', thumb, videoUrl, imageUrl };
+  }
+
+  // Shape 3: has a cover and play fields (simple)
+  if (s.cover || s.play) {
+    return {
+      type:     s.play ? 'video' : 'photo',
+      thumb:    s.cover || s.origin_cover || '',
+      videoUrl: s.play || '',
+      imageUrl: '',
+    };
+  }
+
+  // Unknown shape — skip
+  return null;
+}
+
+function renderStories(stories, username) {
+  const dlAll = () => {
+    stories.forEach((s, i) => {
+      setTimeout(() => {
+        const u = s.videoUrl || s.imageUrl;
+        if (!u) return;
+        const ext = s.type === 'video' ? '.mp4' : '.jpg';
+        const a = document.createElement('a');
+        a.href = `${BASE}/proxy?url=${encodeURIComponent(u)}`;
+        a.download = `story_${username}_${i+1}${ext}`;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      }, i * 700);
+    });
+  };
+  window._dlAllStories = dlAll;
+
+  const cards = stories.map((s, i) => {
+    const dlUrl  = s.videoUrl || s.imageUrl;
+    const dlHref = dlUrl ? `${BASE}/proxy?url=${encodeURIComponent(dlUrl)}` : '#';
+    const dlName = `story_${username}_${i+1}${s.type==='video'?'.mp4':'.jpg'}`;
+    return `
+      <div class="vcard" style="animation-delay:${i*.04}s">
+        <div class="thumb">
+          ${s.thumb
+            ? `<img src="${s.thumb}" loading="lazy" alt="story ${i+1}">`
+            : `<div style="width:100%;height:100%;display:grid;place-items:center;color:var(--muted);font-size:30px">${s.type==='video'?'🎬':'🖼'}</div>`
+          }
+          <div class="tbadge bs">${s.type==='video'?'VIDEO':'FOTO'}</div>
+          <div class="thumb-ov"><span class="plays">Story #${i+1}</span></div>
+        </div>
+        <div class="vinfo">
+          <p class="vdesc">@${username} · Story ${i+1}</p>
+          <a class="dl-btn" href="${dlHref}" download="${dlName}">⬇ Download</a>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  $('s-res').innerHTML = `
+    <div class="rh">
+      <p class="rc">Ditemukan <b>${stories.length}</b> story aktif</p>
+      <button class="btn-sm" onclick="window._dlAllStories()">⬇ Download Semua</button>
+    </div>
+    <div class="grid">${cards}</div>
+  `;
+}
+
+// Enter key
+$('v-url') .addEventListener('keydown', e => e.key==='Enter' && fetchVideo());
+$('b-user').addEventListener('keydown', e => e.key==='Enter' && fetchBatch());
+$('s-user').addEventListener('keydown', e => e.key==='Enter' && fetchStory());
+</script>
+</body>
+</html>

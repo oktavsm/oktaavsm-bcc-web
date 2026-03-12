@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketplace — DURIO Premium Durian</title>
+    <meta name="description" content="Temukan berbagai pilihan durian premium terbaik dengan harga terjangkau.">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* ── MARKETPLACE PAGE ───────────────────────────── */
+        .mp-layout {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 24px;
+            padding: 28px 0 72px;
+        }
+
+        /* ── SIDEBAR ────────────────────────────────────── */
+        .sidebar {
+            position: sticky;
+            top: 84px;
+            align-self: start;
+        }
+
+        .sidebar-section {
+            margin-bottom: 28px;
+        }
+
+        .sidebar-title {
+            font-size: .72rem;
+            font-weight: 700;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--text-3);
+            margin-bottom: 14px;
+        }
+
+        .filter-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            cursor: pointer;
+            border-radius: var(--r-xs);
+            font-size: .875rem;
+            color: var(--text-2);
+            transition: color var(--tr);
+        }
+
+        .filter-option:hover {
+            color: var(--text);
+        }
+
+        .filter-option input[type=checkbox] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--gold);
+            border-radius: 4px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .price-range {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .price-range input[type=number] {
+            width: 100%;
+            height: 36px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--r-xs);
+            padding: 0 10px;
+            font-size: .8rem;
+            background: white;
+        }
+
+        .price-range input:focus {
+            border-color: var(--gold);
+            outline: none;
+        }
+
+        .rating-filter {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .rating-row-filter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: .85rem;
+            color: var(--text-2);
+        }
+
+        .rating-row-filter input[type=radio] {
+            accent-color: var(--gold);
+            cursor: pointer;
+        }
+
+        .sidebar-card {
+            background: white;
+            border-radius: var(--r-md);
+            padding: 22px;
+            border: 1px solid var(--border-lt);
+        }
+
+        /* ── MAIN CONTENT ───────────────────────────────── */
+        .mp-main {}
+
+        .mp-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+
+        .mp-count {
+            font-size: .85rem;
+            color: var(--text-3);
+        }
+
+        .mp-sort {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sort-select {
+            height: 36px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--r-pill);
+            padding: 0 14px;
+            font-size: .85rem;
+            background: white;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        .sort-select:focus {
+            border-color: var(--gold);
+            outline: none;
+        }
+
+        /* ── PROMO BANNER ───────────────────────────────── */
+        .promo-banner {
+            background: var(--green-dk);
+            border-radius: var(--r-lg);
+            padding: 28px 36px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            color: white;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .promo-banner::before {
+            content: '🌿';
+            position: absolute;
+            right: 140px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 80px;
+            opacity: .15;
+        }
+
+        .promo-banner h2 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: -.02em;
+            margin-bottom: 4px;
+        }
+
+        .promo-banner p {
+            font-size: .85rem;
+            color: rgba(255, 255, 255, .65);
+        }
+
+        /* ── PRODUCT GRID ───────────────────────────────── */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: var(--r-md);
+            border: 1px solid var(--border-lt);
+            box-shadow: var(--sh-xs);
+            overflow: hidden;
+            transition: all var(--tr);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--sh-lg);
+        }
+
+        .product-card-img {
+            height: 180px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform .4s ease;
+        }
+
+        .product-card:hover .product-card-img img {
+            transform: scale(1.05);
+        }
+
+        .product-img-ph {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #FDF5DC, #ECC940);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+        }
+
+        .product-card-body {
+            padding: 18px;
+        }
+
+        .product-card-name {
+            font-size: .95rem;
+            font-weight: 700;
+            letter-spacing: -.015em;
+            margin-bottom: 2px;
+        }
+
+        .product-card-origin {
+            font-size: .75rem;
+            color: var(--text-3);
+            margin-bottom: 10px;
+        }
+
+        .product-card-foot {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 12px;
+        }
+
+        .product-card-price .price {
+            font-size: 1.1rem;
+        }
+
+        .product-card .wish-overlay {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            box-shadow: var(--sh-sm);
+            border: none;
+            cursor: pointer;
+            transition: all var(--tr);
+        }
+
+        .product-card .wish-overlay:hover {
+            transform: scale(1.1);
+        }
+
+        /* Wide product card (spans 2 cols) */
+        .product-card-wide {
+            grid-column: span 2;
+        }
+
+        .product-card-wide .product-card-img {
+            height: 200px;
+        }
+
+        /* ── PAGINATION ─────────────────────────────────── */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 40px;
+        }
+
+        .page-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1.5px solid var(--border);
+            background: white;
+            font-size: .875rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--tr);
+            color: var(--text-2);
+        }
+
+        .page-btn:hover,
+        .page-btn.active {
+            background: var(--text);
+            color: white;
+            border-color: var(--text);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-brand">
+                <div class="nav-logo-icon">🌿</div>
+                <span class="nav-logo-text">DURIO</span>
+            </a>
+            <div class="nav-search">
+                <span class="nav-search-icon">🔍</span>
+                <input type="text" placeholder="Cari varietas durian...">
+            </div>
+            <nav class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="marketplace.html" class="nav-link active">Marketplace</a>
+                <a href="about.html" class="nav-link">Tentang Kami</a>
+                <a href="cart.html" class="nav-link">Keranjang</a>
+            </nav>
+            <div class="nav-actions">
+                <button class="nav-btn">🤍</button>
+                <button class="nav-btn" onclick="window.location='cart.html'">
+                    🛒<span class="badge-dot">3</span>
+                </button>
+                <div class="nav-avatar">👤</div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container">
+            <div class="mp-layout">
+
+                <!-- ── SIDEBAR ─────────────────────────────────── -->
+                <aside class="sidebar">
+                    <!-- Category filter -->
+                    <div class="sidebar-card" style="margin-bottom:14px">
+                        <div class="sidebar-section">
+                            <div class="sidebar-title">Varietas</div>
+                            <label class="filter-option"><input type="checkbox" checked> Musang King</label>
+                            <label class="filter-option"><input type="checkbox" checked> D24 Sultan</label>
+                            <label class="filter-option"><input type="checkbox"> Black Thorn</label>
+                            <label class="filter-option"><input type="checkbox"> D101</label>
+                            <label class="filter-option"><input type="checkbox"> XO</label>
+                            <label class="filter-option"><input type="checkbox"> Red Prawn</label>
+                        </div>
+
+                        <div class="divider" style="margin:16px 0"></div>
+
+                        <div class="sidebar-section">
+                            <div class="sidebar-title">Asal Negara</div>
+                            <label class="filter-option"><input type="checkbox" checked> Malaysia 🇲🇾</label>
+                            <label class="filter-option"><input type="checkbox" checked> Indonesia 🇮🇩</label>
+                            <label class="filter-option"><input type="checkbox"> Thailand 🇹🇭</label>
+                        </div>
+
+                        <div class="divider" style="margin:16px 0"></div>
+
+                        <div class="sidebar-section">
+                            <div class="sidebar-title">Harga (per kg)</div>
+                            <div class="price-range" style="margin-bottom:8px">
+                                <input type="number" placeholder="Min" value="50000">
+                                <span style="color:var(--text-3)">—</span>
+                                <input type="number" placeholder="Max" value="300000">
+                            </div>
+                            <button class="btn btn-ghost btn-sm w-full" style="margin-top:8px">Terapkan</button>
+                        </div>
+
+                        <div class="divider" style="margin:16px 0"></div>
+
+                        <div class="sidebar-section mb-0">
+                            <div class="sidebar-title">Rating</div>
+                            <div class="rating-filter">
+                                <label class="rating-row-filter"><input type="radio" name="rating" checked> <span
+                                        class="stars">★★★★★</span> <span>5.0</span></label>
+                                <label class="rating-row-filter"><input type="radio" name="rating"> <span
+                                        class="stars">★★★★☆</span> <span>4.0+</span></label>
+                                <label class="rating-row-filter"><input type="radio" name="rating"> <span
+                                        class="stars">★★★☆☆</span> <span>3.0+</span></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Promo side card -->
+                    <div class="card card-green p-20">
+                        <div style="font-size:32px;margin-bottom:10px">🎁</div>
+                        <div style="font-weight:800;margin-bottom:6px;font-size:.95rem">Member Promo</div>
+                        <div style="font-size:.8rem;color:rgba(255,255,255,.65);margin-bottom:14px">Daftar sekarang &
+                            hemat 20% untuk pembelian pertama!</div>
+                        <button class="btn btn-white btn-sm w-full"
+                            onclick="showToast('Fitur segera hadir! 🎁','🚀')">Daftar Gratis</button>
+                    </div>
+                </aside>
+
+                <!-- ── MAIN CONTENT ──────────────────────────── -->
+                <div class="mp-main">
+                    <!-- Category tabs -->
+                    <div class="cat-tabs" style="margin-bottom:18px">
+                        <button class="cat-tab active">Semua</button>
+                        <button class="cat-tab">Musang King</button>
+                        <button class="cat-tab">D24</button>
+                        <button class="cat-tab">Black Thorn</button>
+                        <button class="cat-tab">D101</button>
+                        <button class="cat-tab">XO</button>
+                        <button class="cat-tab">Organik</button>
+                    </div>
+
+                    <!-- Promo Banner -->
+                    <div class="promo-banner">
+                        <div>
+                            <h2>🔥 Flash Sale — Diskon Hingga 30%</h2>
+                            <p>Penawaran terbatas! Berlaku hingga akhir hari ini</p>
+                        </div>
+                        <div style="text-align:right;flex-shrink:0">
+                            <div style="font-size:1.6rem;font-weight:900;letter-spacing:-.04em">02:45:18</div>
+                            <div style="font-size:.75rem;color:rgba(255,255,255,.55)">sisa waktu</div>
+                        </div>
+                    </div>
+
+                    <!-- Sort & count -->
+                    <div class="mp-header">
+                        <div class="mp-count">Menampilkan <strong>24</strong> produk</div>
+                        <div class="mp-sort">
+                            <span style="font-size:.85rem;color:var(--text-3)">Urutkan:</span>
+                            <select class="sort-select">
+                                <option>Terpopuler</option>
+                                <option>Harga Terendah</option>
+                                <option>Harga Tertinggi</option>
+                                <option>Rating Terbaik</option>
+                                <option>Terbaru</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Products Grid -->
+                    <div class="products-grid">
+
+                        <!-- Wide featured card -->
+                        <div class="product-card product-card-wide" data-href="product.html">
+                            <div class="product-card-img">
+                                <img src="assets/images/collection.png" alt="Durian Collection"
+                                    onerror="this.parentElement.innerHTML='<div class=\'product-img-ph\' style=\'height:200px\'>👑</div>'">
+                                <span class="badge badge-red" style="position:absolute;top:12px;left:12px">🔥 Flash
+                                    Sale</span>
+                            </div>
+                            <div class="product-card-body flex justify-between items-start">
+                                <div>
+                                    <div class="product-card-name" style="font-size:1.1rem">Musang King — Premium
+                                        Selection</div>
+                                    <div class="product-card-origin">📍 Pahang, Malaysia · Grade A</div>
+                                    <div class="rating-row" style="margin:6px 0"><span class="stars">★★★★★</span><span
+                                            class="rating-score">4.9</span><span class="rating-count">(2.1k)</span>
+                                    </div>
+                                    <div class="flex items-center gap-8 mt-8">
+                                        <span class="price">Rp 185.000</span>
+                                        <span class="price-unit">/kg</span>
+                                        <span class="price-ori">Rp 220.000</span>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary add-cart-btn" data-label="Add to Cart">Tambah ke
+                                    Keranjang</button>
+                            </div>
+                        </div>
+
+                        <!-- Normal product cards -->
+                        <div class="product-card" data-href="product.html">
+                            <button class="wish-overlay wish-btn">🤍</button>
+                            <div class="product-card-img">
+                                <div class="product-img-ph">🌿</div>
+                            </div>
+                            <div class="product-card-body">
+                                <span class="badge badge-dark mb-8" style="font-size:.68rem">BESTSELLER</span>
+                                <div class="product-card-name">D24 Sultan</div>
+                                <div class="product-card-origin">📍 Johor, Malaysia</div>
+                                <div class="rating-row"><span class="stars">★★★★☆</span><span
+                                        class="rating-score">4.7</span><span class="rating-count">(890)</span></div>
+                                <div class="product-card-foot">
+                                    <div class="product-card-price">
+                                        <div class="price">Rp 130.000</div>
+                                        <div class="price-unit">/kg</div>
+                                    </div>
+                                    <button class="arrow-btn add-cart-btn" data-label="→">→</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="product-card" data-href="product.html">
+                            <button class="wish-overlay wish-btn">🤍</button>
+                            <div class="product-card-img"
+                                style="background:linear-gradient(135deg,#1B1B1B,#3D3D3D);display:flex;align-items:center;justify-content:center;font-size:72px">
+                                ⚫</div>
+                            <div class="product-card-body">
+                                <span class="badge badge-gold mb-8" style="font-size:.68rem">PREMIUM</span>
+                                <div class="product-card-name">Black Thorn</div>
+                                <div class="product-card-origin">📍 Penang, Malaysia</div>
+                                <div class="rating-row"><span class="stars">★★★★★</span><span
+                                        class="rating-score">4.8</span><span class="rating-count">(1.2k)</span></div>
+                                <div class="product-card-foot">
+                                    <div class="product-card-price">
+                                        <div class="price">Rp 220.000</div>
+                                        <div class="price-unit">/kg</div>
+                                    </div>
+                                    <button class="arrow-btn add-cart-btn" data-label="→">→</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="product-card" data-href="product.html">
+                            <button class="wish-overlay wish-btn">🤍</button>
+                            <div class="product-card-img">
+                                <div class="product-img-ph">🍂</div>
+                            </div>
+                            <div class="product-card-body">
+                                <div class="product-card-name">D101</div>
+                                <div class="product-card-origin">📍 Medan, Indonesia</div>
+                                <div class="rating-row"><span class="stars">★★★★☆</span><span
+                                        class="rating-score">4.5</span><span class="rating-count">(540)</span></div>
+                                <div class="product-card-foot">
+                                    <div class="product-card-price">
+                                        <div class="price">Rp 95.000</div>
+                                        <div class="price-unit">/kg</div>
+                                    </div>
+                                    <button class="arrow-btn add-cart-btn" data-label="→">→</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="product-card" data-href="product.html">
+                            <button class="wish-overlay wish-btn">🤍</button>
+                            <div class="product-card-img"
+                                style="background:linear-gradient(135deg,#FFE8E8,#FF9999);display:flex;align-items:center;justify-content:center;font-size:72px">
+                                🦐</div>
+                            <div class="product-card-body">
+                                <span class="badge badge-red mb-8" style="font-size:.68rem">RARE</span>
+                                <div class="product-card-name">Red Prawn</div>
+                                <div class="product-card-origin">📍 Batu Pahat, Malaysia</div>
+                                <div class="rating-row"><span class="stars">★★★★★</span><span
+                                        class="rating-score">4.9</span><span class="rating-count">(320)</span></div>
+                                <div class="product-card-foot">
+                                    <div class="product-card-price">
+                                        <div class="price">Rp 260.000</div>
+                                        <div class="price-unit">/kg</div>
+                                    </div>
+                                    <button class="arrow-btn add-cart-btn" data-label="→">→</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="product-card" data-href="product.html">
+                            <button class="wish-overlay wish-btn">🤍</button>
+                            <div class="product-card-img">
+                                <div class="product-img-ph" style="background:linear-gradient(135deg,#E8F5E9,#66BB6A)">
+                                    🌱</div>
+                            </div>
+                            <div class="product-card-body">
+                                <span class="badge badge-green mb-8" style="font-size:.68rem">ORGANIK</span>
+                                <div class="product-card-name">Durian Organik D24</div>
+                                <div class="product-card-origin">📍 Bogor, Indonesia</div>
+                                <div class="rating-row"><span class="stars">★★★★☆</span><span
+                                        class="rating-score">4.6</span><span class="rating-count">(210)</span></div>
+                                <div class="product-card-foot">
+                                    <div class="product-card-price">
+                                        <div class="price">Rp 115.000</div>
+                                        <div class="price-unit">/kg</div>
+                                    </div>
+                                    <button class="arrow-btn add-cart-btn" data-label="→">→</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="product-card" data-href="product.html">
+                            <button class="wish-overlay wish-btn">🤍</button>
+                            <div class="product-card-img">
+                                <div class="product-img-ph" style="background:linear-gradient(135deg,#FFF8E1,#FFCA28)">✨
+                                </div>
+                            </div>
+                            <div class="product-card-body">
+                                <div class="product-card-name">XO Durian</div>
+                                <div class="product-card-origin">📍 Perak, Malaysia</div>
+                                <div class="rating-row"><span class="stars">★★★★☆</span><span
+                                        class="rating-score">4.7</span><span class="rating-count">(430)</span></div>
+                                <div class="product-card-foot">
+                                    <div class="product-card-price">
+                                        <div class="price">Rp 145.000</div>
+                                        <div class="price-unit">/kg</div>
+                                    </div>
+                                    <button class="arrow-btn add-cart-btn" data-label="→">→</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="product-card" data-href="product.html">
+                            <button class="wish-overlay wish-btn">🤍</button>
+                            <div class="product-card-img">
+                                <div class="product-img-ph" style="background:linear-gradient(135deg,#E3F2FD,#42A5F5)">
+                                    💎</div>
+                            </div>
+                            <div class="product-card-body">
+                                <span class="badge badge-dark mb-8" style="font-size:.68rem">LIMITED</span>
+                                <div class="product-card-name">D200 Exclusive</div>
+                                <div class="product-card-origin">📍 Sabah, Malaysia</div>
+                                <div class="rating-row"><span class="stars">★★★★★</span><span
+                                        class="rating-score">5.0</span><span class="rating-count">(88)</span></div>
+                                <div class="product-card-foot">
+                                    <div class="product-card-price">
+                                        <div class="price">Rp 350.000</div>
+                                        <div class="price-unit">/kg</div>
+                                    </div>
+                                    <button class="arrow-btn add-cart-btn" data-label="→">→</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div><!-- end products-grid -->
+
+                    <!-- Pagination -->
+                    <div class="pagination">
+                        <button class="page-btn">←</button>
+                        <button class="page-btn active">1</button>
+                        <button class="page-btn">2</button>
+                        <button class="page-btn">3</button>
+                        <span style="display:flex;align-items:center;padding:0 4px;color:var(--text-3)">...</span>
+                        <button class="page-btn">8</button>
+                        <button class="page-btn">→</button>
+                    </div>
+
+                </div><!-- end mp-main -->
+            </div><!-- end mp-layout -->
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div style="display:flex;align-items:center;gap:9px;margin-bottom:4px">
+                        <div class="nav-logo-icon">🌿</div>
+                        <span class="footer-logo-text">DURIO</span>
+                    </div>
+                    <p class="footer-desc">Marketplace durian premium terpercaya. Langsung dari kebun, dikirim segar ke
+                        pintu rumahmu.</p>
+                </div>
+                <div>
+                    <div class="footer-col-title">Navigasi</div>
+                    <div class="footer-col-links">
+                        <a href="index.html">Beranda</a>
+                        <a href="marketplace.html">Marketplace</a>
+                        <a href="about.html">Tentang Kami</a>
+                    </div>
+                </div>
+                <div>
+                    <div class="footer-col-title">Varietas</div>
+                    <div class="footer-col-links">
+                        <a href="#">Musang King</a>
+                        <a href="#">D24 Sultan</a>
+                        <a href="#">Black Thorn</a>
+                    </div>
+                </div>
+                <div>
+                    <div class="footer-col-title">Bantuan</div>
+                    <div class="footer-col-links">
+                        <a href="#">Cara Pemesanan</a>
+                        <a href="#">Kebijakan Pengembalian</a>
+                        <a href="#">Hubungi Kami</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>© 2024 DURIO. Raja Buah, Hadirkan di Rumahmu.</span>
+                <span>🇮🇩 Indonesia</span>
+            </div>
+        </div>
+    </footer>
+
+    <div id="toast" class="toast"></div>
+    <script src="js/main.js"></script>
+    <script>
+        // Countdown timer
+        let seconds = 9918;
+        const timerEl = document.querySelector('.promo-banner [style*="1.6rem"]');
+        setInterval(() => {
+            if (seconds > 0) {
+                seconds--;
+                const h = String(Math.floor(seconds / 3600)).padStart(2, '0');
+                const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
+                const s = String(seconds % 60).padStart(2, '0');
+                if (timerEl) timerEl.textContent = `${h}:${m}:${s}`;
+            }
+        }, 1000);
+
+        // Page button active
+        document.querySelectorAll('.page-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.page-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+    </script>
+</body>
+
+</html>
